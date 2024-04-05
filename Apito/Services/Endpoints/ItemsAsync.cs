@@ -2,14 +2,14 @@
 
 using System.Text;
 
-public static class MachinesDetails
+public class ItemsAsync
 {
-    public static void GetPost(RouteGroupBuilder app)
+    public static void GetPostAsync(RouteGroupBuilder app)
     {
         app.MapGet("", GetAll);
         app.MapPost("", PostOne);
     }
-    public static void GetPutDelete(RouteGroupBuilder app)
+    public static void GetPutDeleteAsync(RouteGroupBuilder app)
     {
         app.MapGet("", GetOne);
         app.MapPut("", PutOne);
@@ -19,21 +19,28 @@ public static class MachinesDetails
     private static async Task<IResult> GetAll(MongoCrud crud, HttpContext context)
     {
         //string customHeaderValue = context.Request.Headers["Xaaa"]!;
+
         var jsonList = await crud.GetCollectionToJsonAsync("Users", "ShortcutsGrid");
         if (jsonList == null)
+        {
             return Results.NotFound();
+            //context.Response.StatusCode = StatusCodes.Status404NotFound;
+        }
+        //await context.Response.WriteAsJsonAsync(jsonList);
         return Results.Ok(jsonList);
     }
 
     private static async Task<IResult> PostOne(MongoCrud crud, HttpContext context)
     {
         //string customHeaderValue = context.Request.Headers["Xaaa"]!;
+
         using var reader = new StreamReader(context.Request.Body, Encoding.UTF8);
         string requestBody = await reader.ReadToEndAsync();
         reader.Dispose();
         var (id, itemJason) = await crud.AddAsync(requestBody, "Users", "ShortcutsGrid");
         if (string.IsNullOrEmpty(id))
             return Results.NotFound();
+        //await context.Response.WriteAsJsonAsync(item);
         return Results.Created($"/items/{id}", itemJason);
     }
 
@@ -80,6 +87,5 @@ public static class MachinesDetails
         //context.Response.StatusCode = StatusCodes.Status204NoContent;
         return Results.NoContent();
     }
-
 
 }

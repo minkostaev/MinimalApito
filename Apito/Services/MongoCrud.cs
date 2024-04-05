@@ -3,6 +3,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
+using System.Text.Json;
 
 public class MongoCrud
 {
@@ -29,57 +30,35 @@ public class MongoCrud
         return true;
     }
     private FilterDefinition<BsonDocument> IdFilter(string id) { return Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(id)); }
-    private BsonDocument? StringToBson(string document)
+    private BsonDocument? StringToBson(string json)
     {
         BsonDocument doc;
-        try { doc = BsonSerializer.Deserialize<BsonDocument>(document); }
+        try { doc = BsonSerializer.Deserialize<BsonDocument>(json); }
         catch { return null; }
         return doc;
     }
-
-    private string FixId(BsonDocument doc)
+    private string? BsonToString(BsonDocument bDoc)
     {
-        var bDocId = doc["_id"];
+        try { return JsonSerializer.Serialize(bDoc); }
+        catch { return null; }
+    }
+    private string FixId(BsonDocument bDoc)
+    {
+        var bDocId = bDoc["_id"];
         if (bDocId == null)
             return string.Empty;
         string result = bDocId.ToString()!;
-        //doc["_id"] = doc["_id"].ToString();
-        doc.Set("_id", result);
+        //bDoc["_id"] = bDoc["_id"].ToString();
+        bDoc.Set("_id", result);
         return result;
     }
-
-    // PUBLIC
-
-    public List<string>? GetCollectionNames(string dbName)
+    private object BsonMapper(BsonDocument bDoc) { return BsonTypeMapper.MapToDotNetValue(bDoc); }
+    private List<BsonDocument> CollectionToJson(IMongoCollection<BsonDocument> mongoCollection)
     {
-        if (!GetDatabase(dbName))
-            return null;
-        return Databases![dbName]?.ListCollectionNames().ToList();
-    }
-    public IMongoCollection<BsonDocument>? GetCollection(string name, string dbName)
-    {
-        var collection = GetCollectionNames(dbName);
-        if (collection == null)
-            return null;
-        if (!collection!.Contains(name))
-            return null;
-
-        //var collection = db.GetCollection<BsonDocument>("Users");
-        //var items = await collection.Find(_ => true).ToListAsync();
-
-        return Databases![dbName]?.GetCollection<BsonDocument>(name)!;
-    }
-    public List<object>? GetCollectionToJson(string name, string dbName)
-    {
-        var collection = GetCollection(name, dbName);
-        if (collection == null)
-            return null;
-        
         //var result = await collection.Find(new BsonDocument()).ToListAsync();
         //var obj = result.ToJson();
-
         var mongoList = new List<BsonDocument>();
-        using (var cursor = collection.Find(new BsonDocument()).ToCursor())
+        using (var cursor = mongoCollection.Find(new BsonDocument()).ToCursor())
         {
             while (cursor.MoveNext())
             {
@@ -90,73 +69,140 @@ public class MongoCrud
                 }
             }
         }
-        return mongoList.ConvertAll(BsonTypeMapper.MapToDotNetValue);
+        return mongoList;
+    }
+
+    // PUBLIC
+
+    public List<string>? GetCollectionNames(string dbName)
+    {
+        if (!GetDatabase(dbName))
+            return null;
+        return Databases![dbName]?.ListCollectionNames().ToList();
+    }
+    public async Task<List<string>?> GetCollectionNamesAsync(string dbName)
+    {
+        if (!GetDatabase(dbName))
+            return null;
+        return await Databases![dbName]?.ListCollectionNames().ToListAsync()!;
+    }
+    public IMongoCollection<BsonDocument>? GetCollection(string name, string dbName)
+    {
+        var collection = GetCollectionNames(dbName);
+        if (collection == null)
+            return null;
+        if (!collection!.Contains(name))
+            return null;
+        //var items = await collection.Find(_ => true).ToListAsync();
+        return Databases![dbName]?.GetCollection<BsonDocument>(name)!;
+    }
+    public async Task<IMongoCollection<BsonDocument>?> GetCollectionAsync(string name, string dbName)
+    {
+        var collection = await GetCollectionNamesAsync(dbName);
+        if (collection == null)
+            return null;
+        if (!collection!.Contains(name))
+            return null;
+        //var items = await collection.Find(_ => true).ToListAsync();
+        return Databases![dbName]?.GetCollection<BsonDocument>(name)!;
+    }
+    public List<object>? GetCollectionToJson(string name, string dbName)
+    {
+        var collection = GetCollection(name, dbName);
+        if (collection == null)
+            return null;
+        return CollectionToJson(collection).ConvertAll(BsonTypeMapper.MapToDotNetValue);
+    }
+    public async Task<List<object>?> GetCollectionToJsonAsync(string name, string dbName)
+    {
+        var collection = await GetCollectionAsync(name, dbName);
+        if (collection == null)
+            return null;
+        return CollectionToJson(collection).ConvertAll(BsonTypeMapper.MapToDotNetValue);
     }
 
     // Read
 
-    public BsonDocument? GetItem(string id, string name, string dbName)
+    public BsonDocument? GetItem(string id, string collectionName, string dbName)
     {
-        var collection = GetCollection(name, dbName);
+        var collection = GetCollection(collectionName, dbName);
         if (collection == null)
             return null;
         return collection.Find(IdFilter(id)).FirstOrDefault();
     }
-    public object? GetItemJson(string id, string name, string dbName)
+    public async Task<BsonDocument?> GetItemAsync(string id, string collectionName, string dbName)
     {
-        var result = GetItem(id, name, dbName);
+        var collection = await GetCollectionAsync(collectionName, dbName);
+        if (collection == null)
+            return null;
+        return collection.Find(IdFilter(id)).FirstOrDefault();
+    }
+    public object? GetItemJson(string id, string collectionName, string dbName)
+    {
+        var result = GetItem(id, collectionName, dbName);
         if (result == null)
             return null;
         FixId(result);
-        return BsonTypeMapper.MapToDotNetValue(result);
+        return BsonMapper(result);
+    }
+    public async Task<object?> GetItemJsonAsync(string id, string collectionName, string dbName)
+    {
+        var result = await GetItemAsync(id, collectionName, dbName);
+        if (result == null)
+            return null;
+        FixId(result);
+        return BsonMapper(result);
     }
 
     // Create
 
-    //public BsonDocument? Add(string name, string dbName, string document)
-    //{
-    //    var collection = GetCollection(name, dbName);
-    //    if (collection == null)
-    //        return null;
-    //    var bsonDoc = StringToBson(document);
-    //    collection.InsertOne(bsonDoc);
-    //    return bsonDoc;
-    //}
-    public async Task<(string, object?)> AddAsync(string name, string dbName, string document)
+    public (string, object?) Add(string json, string name, string dbName)
     {
+        BsonDocument? bDoc = StringToBson(json);
+        if (bDoc == null)
+            return (string.Empty, null);
         var collection = GetCollection(name, dbName);
         if (collection == null)
             return (string.Empty, null);
-        var bsonDoc = StringToBson(document);
-        if (bsonDoc == null)
+        collection.InsertOne(bDoc);
+        string id = FixId(bDoc);
+        return (id, BsonMapper(bDoc));
+    }
+    public async Task<(string, object?)> AddAsync(string json, string name, string dbName)
+    {
+        BsonDocument? bDoc = StringToBson(json);
+        if (bDoc == null)
             return (string.Empty, null);
-        await collection.InsertOneAsync(bsonDoc);
-        string id = FixId(bsonDoc);
-        return (id, BsonTypeMapper.MapToDotNetValue(bsonDoc));
+        var collection = await GetCollectionAsync(name, dbName);
+        if (collection == null)
+            return (string.Empty, null);
+        await collection.InsertOneAsync(bDoc);
+        string id = FixId(bDoc);
+        return (id, BsonMapper(bDoc));
     }
 
     // Update
 
-    //public bool Edit(string id, string name, string dbName, string document)
-    //{
-    //    BsonDocument? inDoc = StringToBson(document);
-    //    if (inDoc == null)
-    //        return false;
-    //    var collection = GetCollection(name, dbName);
-    //    if (collection == null)
-    //        return false;
-    //    var result = collection.ReplaceOne(IdFilter(id), inDoc);
-    //    if (result.MatchedCount == 0)
-    //        return false;
-    //    else
-    //        return true;
-    //}
-    public async Task<bool> EditAsync(string id, string name, string dbName, string document)
+    public bool Edit(string json, string id, string collectionName, string dbName)
     {
-        BsonDocument? inDoc = StringToBson(document);
+        BsonDocument? bDoc = StringToBson(json);
+        if (bDoc == null)
+            return false;
+        var collection = GetCollection(collectionName, dbName);
+        if (collection == null)
+            return false;
+        var result = collection.ReplaceOne(IdFilter(id), bDoc);
+        if (result.MatchedCount == 0)
+            return false;
+        else
+            return true;
+    }
+    public async Task<bool> EditAsync(string json, string id, string collectionName, string dbName)
+    {
+        BsonDocument? inDoc = StringToBson(json);
         if (inDoc == null)
             return false;
-        var collection = GetCollection(name, dbName);
+        var collection = await GetCollectionAsync(collectionName, dbName);
         if (collection == null)
             return false;
         var result = await collection.ReplaceOneAsync(IdFilter(id), inDoc);
@@ -168,20 +214,20 @@ public class MongoCrud
 
     // Delete
 
-    //public bool Remove(string id, string name, string dbName)
-    //{
-    //    var collection = GetCollection(name, dbName);
-    //    if (collection == null)
-    //        return false;
-    //    var result = collection.DeleteOne(IdFilter(id));
-    //    if (result.DeletedCount == 0)
-    //        return false;
-    //    else
-    //        return true;
-    //}
-    public async Task<bool> RemoveAsync(string id, string name, string dbName)
+    public bool Remove(string id, string name, string dbName)
     {
         var collection = GetCollection(name, dbName);
+        if (collection == null)
+            return false;
+        var result = collection.DeleteOne(IdFilter(id));
+        if (result.DeletedCount == 0)
+            return false;
+        else
+            return true;
+    }
+    public async Task<bool> RemoveAsync(string id, string name, string dbName)
+    {
+        var collection = await GetCollectionAsync(name, dbName);
         if (collection == null)
             return false;
         var result = await collection.DeleteOneAsync(IdFilter(id));
@@ -190,10 +236,5 @@ public class MongoCrud
         else
             return true;
     }
-
-    //    // Object to JSON
-    //    string jsonString = JsonSerializer.Serialize(document);
-    //    // JSON string to BsonDocument
-    //    return BsonSerializer.Deserialize<BsonDocument>(jsonString);
 
 }

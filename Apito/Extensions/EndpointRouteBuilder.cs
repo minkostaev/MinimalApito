@@ -20,10 +20,12 @@ public static class EndpointRouteBuilder
         //}).WithName("GetWeatherForecast").WithOpenApi();
 
         var items = app.MapGroup("/items");
-        var item = items.MapGroup("/{id}");//id:guid
+        Items.Map(items, "Users", "ShortcutsGrid");
 
-        Items.GetPost(items);
-        Items.GetPutDelete(item);
+        var itemsAsync = app.MapGroup("/itemsasync");
+        var itemAsync = itemsAsync.MapGroup("/{id}");//id:guid
+        ItemsAsync.GetPostAsync(itemsAsync);
+        ItemsAsync.GetPutDeleteAsync(itemAsync);
 
     }
 

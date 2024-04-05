@@ -6,4 +6,6 @@ public static class AppValues
 {
     public static string? Version => Assembly.GetExecutingAssembly().GetName().Version?.ToString();
 
+   
+
 }
