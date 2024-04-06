@@ -23,9 +23,7 @@ public static class EndpointRouteBuilder
         Items.Map(items, "Users", "ShortcutsGrid");
 
         var itemsAsync = app.MapGroup("/itemsasync");
-        var itemAsync = itemsAsync.MapGroup("/{id}");//id:guid
-        ItemsAsync.GetPostAsync(itemsAsync);
-        ItemsAsync.GetPutDeleteAsync(itemAsync);
+        ItemsAsync.Map(itemsAsync, "Users", "ShortcutsGrid");
 
     }
 

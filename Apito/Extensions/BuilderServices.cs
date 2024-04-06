@@ -1,15 +1,17 @@
 ﻿namespace Apito.Extensions;
 
+using Apito.Models;
 using Apito.Services;
+using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
+using System.Reflection;
 
 public static class BuilderServices
 {
     public static async Task AddAll(this IServiceCollection services, ConfigurationManager configuration)
     {
-        // Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
+        services.AddSwaggerServices();
+
 
         // CORS
         services.AddCors(options =>

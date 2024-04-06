@@ -14,19 +14,10 @@ public static class BuilderMethods
     {
         app.UseCors(app.Configuration["CORS:Policy-Name"]!);
         app.UseHttpsRedirection();
-        
-        // Swagger
+
         //if (app.Environment.IsDevelopment())
         //{
-        app.UseSwagger(c =>
-        {
-            c.RouteTemplate = "{documentName}/swagger.{json|yaml}";
-        });
-        app.UseSwaggerUI(c =>
-        {
-            c.SwaggerEndpoint("v1/swagger.json", "v1");
-            c.RoutePrefix = "";
-        });
+        app.AddSwaggerUses();
         //}
 
         app.Use(async (context, next) =>
