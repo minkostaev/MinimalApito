@@ -9,11 +9,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\swagger.html" />
+    <None Remove="Resources\Swagger-2015.html" />
+    <None Remove="Resources\Swagger-2019.html" />
+    <None Remove="Resources\Swagger-2021.html" />
+    <None Remove="Resources\Swagger-2022.html" />
+    <None Remove="Resources\Swagger.html" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\swagger.html" />
+    <EmbeddedResource Include="Resources\Swagger-2015.html" />
+    <EmbeddedResource Include="Resources\Swagger-2019.html" />
+    <EmbeddedResource Include="Resources\Swagger-2021.html" />
+    <EmbeddedResource Include="Resources\Swagger-2022.html" />
+    <EmbeddedResource Include="Resources\Swagger.html" />
   </ItemGroup>
 
   <ItemGroup>

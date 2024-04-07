@@ -1,7 +1,3 @@
-<script async id="mini-profiler" src="/mini-profiler-resources/includes.min.js?v=4.2.1+b27bea37e9" data-version="4.2.1+b27bea37e9" data-path="/mini-profiler-resources/" data-current-id="144b1192-acd3-4fe2-bbc5-6f1e1c6d53df" data-ids="87a1341b-995d-4d1d-aaba-8f2bfcfc9ca9,144b1192-acd3-4fe2-bbc5-6f1e1c6d53df" data-position="Left" data-scheme="Light" data-authorized="true" data-max-traces="15" data-toggle-shortcut="Alt+P" data-trivial-milliseconds="2.0" data-ignored-duplicate-execute-types="Open,OpenAsync,Close,CloseAsync">
-</script>
-
-<!-- HTML for static distribution bundle build -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -46,15 +42,15 @@
     <script src="./swagger-ui-standalone-preset.js"></script>
     <script>
         /* Source: https://gist.github.com/lamberta/3768814
-        * Parse a string function definition and return a function object. Does not use eval.
-        * @param {string} str
-        * @return {function}
-        *
-        * Example:
-        * var f = function (x, y) { return x * y; };
-        * var g = parseFunction(f.toString());
-        * g(33, 3); //=> 99
-        */
+         * Parse a string function definition and return a function object. Does not use eval.
+         * @param {string} str
+         * @return {function}
+         *
+         * Example:
+         *  var f = function (x, y) { return x * y; };
+         *  var g = parseFunction(f.toString());
+         *  g(33, 3); //=> 99
+         */
         function parseFunction(str) {
             if (!str) return void (0);
 
@@ -90,7 +86,7 @@
 
             // If oauth2RedirectUrl isn't specified, use the built-in default
             if (!configObject.hasOwnProperty("oauth2RedirectUrl"))
-                configObject.oauth2RedirectUrl = window.location.href.replace("index.html", "oauth2-redirect.html").split('#')[0];
+                configObject.oauth2RedirectUrl = (new URL("oauth2-redirect.html", window.location.href)).href;
 
             // Apply mandatory parameters
             configObject.dom_id = "#swagger-ui";
@@ -111,6 +107,10 @@
             ui.initOAuth(oauthConfigObject);
 
             // End Swagger UI call region
+
+            // add custom here:
+            
+            // ---
 
             window.ui = ui
         }

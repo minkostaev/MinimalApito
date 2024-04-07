@@ -1,10 +1,10 @@
 ﻿namespace Apito.Services.Endpoints;
 
-using System.Collections;
-using System.Text;
-
 public static class Items
 {
+    private static string? CollectionName { get; set; }
+    private static string? DatabasesName { get; set; }
+
     public static void Map(RouteGroupBuilder app, string collectionName, string databasesName)
     {
         CollectionName = collectionName;
@@ -20,12 +20,9 @@ public static class Items
         item.MapDelete("", DeleteOne);
     }
 
-    private static string CollectionName { get; set; }
-    private static string DatabasesName { get; set; }
-
-    private static IResult GetAll(MongoCrud crud)//, HttpContext context)
+    private static IResult GetAll(MongoCrud crud)///, HttpContext context)
     {
-        var jsonList = crud.GetCollectionToJson("Users", "ShortcutsGrid");
+        var jsonList = crud.GetCollectionToJson(CollectionName!, DatabasesName!);
         if (jsonList == null)
             return Results.NotFound();
         return Results.Ok(jsonList);
@@ -34,7 +31,7 @@ public static class Items
     private static IResult PostOne(MongoCrud crud, HttpContext context)
     {
         string requestBody = HttpContextHelper.GetContextBody(context);
-        var (id, itemJson) = crud.Add(requestBody, CollectionName, DatabasesName);
+        var (id, itemJson) = crud.Add(requestBody, CollectionName!, DatabasesName!);
         if (string.IsNullOrEmpty(id))
             return Results.NotFound();
         return Results.Created($"/items/{id}", itemJson);
@@ -42,7 +39,7 @@ public static class Items
 
     private static IResult GetOne(MongoCrud crud, HttpContext context, string id)
     {
-        var item = crud.GetItemJson(id, CollectionName, DatabasesName);
+        var item = crud.GetItemJson(id, CollectionName!, DatabasesName!);
         if (item == null)
             return Results.NotFound();
         return Results.Ok(item);
@@ -51,7 +48,7 @@ public static class Items
     private static IResult PutOne(MongoCrud crud, HttpContext context, string id)
     {
         string requestBody = HttpContextHelper.GetContextBody(context);
-        bool edited = crud.Edit(requestBody, id, CollectionName, DatabasesName);
+        bool edited = crud.Edit(requestBody, id, CollectionName!, DatabasesName!);
         if (!edited)
             return Results.NotFound();
         return GetOne(crud, context, id);
@@ -59,7 +56,7 @@ public static class Items
 
     private static IResult DeleteOne(MongoCrud crud, HttpContext context, string id)
     {
-        var deleted = crud.Remove(id, CollectionName, DatabasesName);
+        var deleted = crud.Remove(id, CollectionName!, DatabasesName!);
         if (!deleted)
             return Results.NotFound();
         return Results.NoContent();

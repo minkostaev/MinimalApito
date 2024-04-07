@@ -25,6 +25,9 @@ public static class EndpointRouteBuilder
         var itemsAsync = app.MapGroup("/itemsasync");
         ItemsAsync.Map(itemsAsync, "Users", "ShortcutsGrid");
 
+        //var machinesDetails = app.MapGroup("/machinesdetails");
+        //MachinesDetails.Map(machinesDetails, "MachinesDetails", "ShortcutsGrid");
+
     }
 
 }
