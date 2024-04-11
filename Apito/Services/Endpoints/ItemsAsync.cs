@@ -30,7 +30,7 @@ public class ItemsAsync
 
     private static async Task<IResult> PostOneAsync(MongoCrud crud, HttpContext context)
     {
-        string requestBody = HttpContextHelper.GetContextBody(context);
+        string requestBody = await HttpContextHelper.GetContextBodyAsync(context);
         var (id, itemJason) = await crud.AddAsync(requestBody, CollectionName!, DatabasesName!);
         if (string.IsNullOrEmpty(id))
             return Results.NotFound();
@@ -47,7 +47,7 @@ public class ItemsAsync
 
     private static async Task<IResult> PutOneAsync(MongoCrud crud, HttpContext context, string id)
     {
-        string requestBody = HttpContextHelper.GetContextBody(context);
+        string requestBody = await HttpContextHelper.GetContextBodyAsync(context);
         bool edited = await crud.EditAsync(requestBody, id, CollectionName!, DatabasesName!);
         if (!edited)
             return Results.NotFound();

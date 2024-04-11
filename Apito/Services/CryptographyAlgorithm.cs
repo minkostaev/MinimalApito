@@ -18,7 +18,7 @@ public class CryptographyAlgorithm
         return UTF8Encoding.UTF8.GetString(newDecrypt);
     }
 
-    private byte[] CreateKey(string key)
+    private static byte[] CreateKey(string key)
     {
         var objMD5CryptoService = MD5.Create();
         byte[] securityKeyArray = objMD5CryptoService.ComputeHash(UTF8Encoding.UTF8.GetBytes(key));
@@ -38,4 +38,5 @@ public class CryptographyAlgorithm
             return cryptoTransform.TransformFinalBlock(data, 0, data.Length);
         }
     }
+
 }

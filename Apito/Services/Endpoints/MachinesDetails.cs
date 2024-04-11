@@ -1,25 +1,32 @@
 ﻿namespace Apito.Services.Endpoints;
 
-using System.Text;
+using Apito.Models.TheMachine;
+using MongoDB.Bson.Serialization;
+using System.Text.Json;
 
 public static class MachinesDetails
 {
-    public static void GetPost(RouteGroupBuilder app)
+    private static string? CollectionName { get; set; }
+    private static string? DatabasesName { get; set; }
+
+    public static void Map(RouteGroupBuilder app, string collectionName, string databasesName)
     {
+        CollectionName = collectionName;
+        DatabasesName = databasesName;
+
         app.MapGet("", GetAll);
         app.MapPost("", PostOne);
-    }
-    public static void GetPutDelete(RouteGroupBuilder app)
-    {
-        app.MapGet("", GetOne);
-        app.MapPut("", PutOne);
-        app.MapDelete("", DeleteOne);
+
+        //var item = app.MapGroup("/{id}");//id:guid
+
+        //item.MapGet("", GetOne);
+        //item.MapPut("", PutOne);
+        //item.MapDelete("", DeleteOne);
     }
 
     private static async Task<IResult> GetAll(MongoCrud crud, HttpContext context)
     {
-        //string customHeaderValue = context.Request.Headers["Xaaa"]!;
-        var jsonList = await crud.GetCollectionToJsonAsync("Users", "ShortcutsGrid");
+        var jsonList = await crud.GetCollectionToJsonAsync(CollectionName!, DatabasesName!);
         if (jsonList == null)
             return Results.NotFound();
         return Results.Ok(jsonList);
@@ -27,59 +34,39 @@ public static class MachinesDetails
 
     private static async Task<IResult> PostOne(MongoCrud crud, HttpContext context)
     {
-        //string customHeaderValue = context.Request.Headers["Xaaa"]!;
-        using var reader = new StreamReader(context.Request.Body, Encoding.UTF8);
-        string requestBody = await reader.ReadToEndAsync();
-        reader.Dispose();
-        var (id, itemJason) = await crud.AddAsync(requestBody, "Users", "ShortcutsGrid");
+        string machineHeader = context.Request.Headers["Desktop-Machine"]!;
+        string valueHeader = context.Request.Headers["Desktop-Value"]!;
+        if (machineHeader == null)
+            return Results.NotFound();
+
+        #region Log
+        var log = new
+        {
+            Hash = machineHeader,
+            Value = valueHeader,
+            Date = DateTime.Now
+        };
+        //var log = new Log()
+        //{
+        //    Hash = machineHeader,
+        //    Value = valueHeader,
+        //    Date = DateTime.Now
+        //};
+        string logJson = JsonSerializer.Serialize(log);
+        var (idLog, _) = await crud.AddAsync(logJson, "MachinesLogs", DatabasesName!);
+        if (string.IsNullOrEmpty(idLog))
+            return Results.NotFound();
+        #endregion
+
+        var machineExist = await crud.GetItemJsonAsync("Hash", machineHeader, CollectionName!, DatabasesName!);
+        if (machineExist != null)
+            return Results.NotFound();
+
+        string requestBody = await HttpContextHelper.GetContextBodyAsync(context);
+        var (id, itemJason) = await crud.AddAsync(requestBody, CollectionName!, DatabasesName!);
         if (string.IsNullOrEmpty(id))
             return Results.NotFound();
-        return Results.Created($"/items/{id}", itemJason);
+        return Results.Created($"/machinesdetails/{id}", itemJason);
     }
-
-    private static async Task<IResult> GetOne(MongoCrud crud, HttpContext context, string id)
-    {
-        //string customHeaderValue = context.Request.Headers["Xaaa"]!;
-
-        var item = await crud.GetItemJsonAsync(id, "Users", "ShortcutsGrid");
-        if (item == null)
-            return Results.NotFound();
-        //context.Response.StatusCode = StatusCodes.Status404NotFound;
-        return Results.Ok(item);
-        //await context.Response.WriteAsJsonAsync(item);
-    }
-
-    private static async Task<IResult> PutOne(MongoCrud crud, HttpContext context, string id)
-    {
-        //string customHeaderValue = context.Request.Headers["Xaaa"]!;
-
-        string requestBody;
-        using (var reader = new StreamReader(context.Request.Body, Encoding.UTF8))
-        {
-            requestBody = await reader.ReadToEndAsync();
-        }
-        bool edited = await crud.EditAsync(requestBody, id, "Users", "ShortcutsGrid");
-        if (!edited)
-        {
-            //context.Response.StatusCode = StatusCodes.Status404NotFound;
-            return Results.NotFound();
-        }
-        return await GetOne(crud, context, id);
-    }
-
-    private static async Task<IResult> DeleteOne(MongoCrud crud, HttpContext context, string id)
-    {
-        //string customHeaderValue = context.Request.Headers["Xaaa"]!;
-
-        var deleted = await crud.RemoveAsync(id, "Users", "ShortcutsGrid");
-        if (!deleted)
-        {
-            //context.Response.StatusCode = StatusCodes.Status404NotFound;
-            return Results.NotFound();
-        }
-        //context.Response.StatusCode = StatusCodes.Status204NoContent;
-        return Results.NoContent();
-    }
-
 
 }

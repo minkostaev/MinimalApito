@@ -30,6 +30,7 @@ public class MongoCrud
         return true;
     }
     private FilterDefinition<BsonDocument> IdFilter(string id) { return Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(id)); }
+    private FilterDefinition<BsonDocument> CustomFilter(string key, string value) { return Builders<BsonDocument>.Filter.Eq(key, value); }
     private BsonDocument? StringToBson(string json)
     {
         BsonDocument doc;
@@ -122,6 +123,37 @@ public class MongoCrud
     }
 
     // Read
+
+    public BsonDocument? GetItem(string key, string value, string collectionName, string dbName)
+    {
+        var collection = GetCollection(collectionName, dbName);
+        if (collection == null)
+            return null;
+        return collection.Find(CustomFilter(key, value)).FirstOrDefault();
+    }
+    public async Task<BsonDocument?> GetItemAsync(string key, string value, string collectionName, string dbName)
+    {
+        var collection = await GetCollectionAsync(collectionName, dbName);
+        if (collection == null)
+            return null;
+        return collection.Find(CustomFilter(key, value)).FirstOrDefault();
+    }
+    public object? GetItemJson(string key, string value, string collectionName, string dbName)
+    {
+        var result = GetItem(key, value, collectionName, dbName);
+        if (result == null)
+            return null;
+        FixId(result);
+        return BsonMapper(result);
+    }
+    public async Task<object?> GetItemJsonAsync(string key, string value, string collectionName, string dbName)
+    {
+        var result = await GetItemAsync(key, value, collectionName, dbName);
+        if (result == null)
+            return null;
+        FixId(result);
+        return BsonMapper(result);
+    }
 
     public BsonDocument? GetItem(string id, string collectionName, string dbName)
     {
