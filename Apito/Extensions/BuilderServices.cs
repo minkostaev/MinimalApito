@@ -12,7 +12,6 @@ public static class BuilderServices
     {
         services.AddSwaggerServices();
 
-
         // CORS
         services.AddCors(options =>
         {

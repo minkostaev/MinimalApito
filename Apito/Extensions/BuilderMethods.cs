@@ -5,13 +5,10 @@ using Microsoft.AspNetCore.Routing;
 
 public static class BuilderMethods
 {
-    //public static void AddEndpoints(this IEndpointRouteBuilder app)
-    //{
-
-    //}
-
     public static void AddAllUses(this WebApplication app)
     {
+        app.UseStaticFiles();// wwwroot
+
         app.UseCors(app.Configuration["CORS:Policy-Name"]!);
         app.UseHttpsRedirection();
 

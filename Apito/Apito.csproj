@@ -5,28 +5,20 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>true</InvariantGlobalization>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\Swagger-2015.html" />
-    <None Remove="Resources\Swagger-2019.html" />
-    <None Remove="Resources\Swagger-2021.html" />
-    <None Remove="Resources\Swagger-2022.html" />
     <None Remove="Resources\Swagger.html" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Swagger-2015.html" />
-    <EmbeddedResource Include="Resources\Swagger-2019.html" />
-    <EmbeddedResource Include="Resources\Swagger-2021.html" />
-    <EmbeddedResource Include="Resources\Swagger-2022.html" />
     <EmbeddedResource Include="Resources\Swagger.html" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.3" />
-    <PackageReference Include="MongoDB.Driver" Version="2.24.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.4" />
+    <PackageReference Include="MongoDB.Driver" Version="2.25.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 
