@@ -11,6 +11,7 @@ public static class SwaggerConfiguration
     {
         // Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         services.AddEndpointsApiExplorer();
+
         //services.AddSwaggerGen();
         services.AddSwaggerGen(options =>
         {
@@ -33,6 +34,9 @@ public static class SwaggerConfiguration
                     Url = new Uri("https://github.com/minkostaev/MinimalApito")
                 }
             });
+
+            //options.SwaggerDoc("v2", new OpenApiInfo { Title = "Your API V2", Version = "v2" });
+
 
             //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
@@ -70,14 +74,17 @@ public static class SwaggerConfiguration
 
     public static void AddSwaggerUses(this WebApplication app)
     {
+        //Properties/launchSettings.json
+        string address = "swagger";//launchUrl
         app.UseSwagger(c =>
         {
-            c.RouteTemplate = "{documentName}/swagger.{json|yaml}";
+            c.RouteTemplate = address + "/{documentName}/swagger.{json|yaml}";
         });
         app.UseSwaggerUI(c =>
         {
-            c.SwaggerEndpoint("v1/swagger.json", "v1");
-            c.RoutePrefix = "";
+            c.RoutePrefix = address;
+            c.SwaggerEndpoint("v1/swagger.json", "v1 Name");
+            //c.SwaggerEndpoint("v2/swagger.json", "v2 Label");
             c.DocExpansion(DocExpansion.None);
             c.EnableTryItOutByDefault();
             string embeddedHtml = $"{AppValues.Name}.Resources.Swagger.html";
