@@ -1,5 +1,6 @@
 ﻿namespace Apito.Services.Endpoints;
 
+using Apito.Models;
 using Apito.Models.TheMachine;
 using MongoDB.Bson.Serialization;
 using System.Text.Json;
@@ -35,28 +36,8 @@ public static class MachinesDetails
     private static async Task<IResult> PostOne(MongoCrud crud, HttpContext context)
     {
         string machineHeader = context.Request.Headers["Desktop-Machine"]!;
-        string valueHeader = context.Request.Headers["Desktop-Value"]!;
-        if (machineHeader == null)
-            return Results.NotFound();
-
-        #region Log
-        var log = new
-        {
-            Hash = machineHeader,
-            Value = valueHeader,
-            Date = DateTime.Now
-        };
-        //var log = new Log()
-        //{
-        //    Hash = machineHeader,
-        //    Value = valueHeader,
-        //    Date = DateTime.Now
-        //};
-        string logJson = JsonSerializer.Serialize(log);
-        var (idLog, _) = await crud.AddAsync(logJson, "MachinesLogs", DatabasesName!);
-        if (string.IsNullOrEmpty(idLog))
-            return Results.NotFound();
-        #endregion
+        
+        await MachinesLogs.PostOne(crud, context);
 
         var machineExist = await crud.GetItemJsonAsync("Hash", machineHeader, CollectionName!, DatabasesName!);
         if (machineExist != null)

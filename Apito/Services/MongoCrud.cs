@@ -268,5 +268,19 @@ public class MongoCrud
         else
             return true;
     }
+    public async Task<bool> RemoveAsync(List<string> ids, string name, string dbName)
+    {
+        var collection = await GetCollectionAsync(name, dbName);
+        if (collection == null)
+            return false;
+        bool result = true;
+        foreach (var id in ids)
+        {
+            var deleted = await collection.DeleteManyAsync(IdFilter(id));
+            if (deleted.DeletedCount == 0)
+                result = false;
+        }
+        return result;
+    }
 
 }

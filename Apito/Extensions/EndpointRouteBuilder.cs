@@ -28,6 +28,8 @@ public static class EndpointRouteBuilder
         var machinesDetails = app.MapGroup("/machinesdetails");
         MachinesDetails.Map(machinesDetails, "MachinesDetails", "ShortcutsGrid");
 
+        var machinesLogs = app.MapGroup("/machineslogs");
+        MachinesLogs.Map(machinesLogs, "MachinesLogs", "ShortcutsGrid");
     }
 
 }
