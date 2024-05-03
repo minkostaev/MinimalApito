@@ -1,8 +1,5 @@
 ﻿namespace Apito.Services.Endpoints;
 
-using Apito.Models;
-using Apito.Models.TheMachine;
-using MongoDB.Bson.Serialization;
 using System.Text.Json;
 
 public static class MachinesDetails
@@ -18,11 +15,11 @@ public static class MachinesDetails
         app.MapGet("", GetAll);
         app.MapPost("", PostOne);
 
-        //var item = app.MapGroup("/{id}");//id:guid
+        var item = app.MapGroup("/{id}");//id:guid
 
-        //item.MapGet("", GetOne);
+        item.MapGet("", GetOne);
         //item.MapPut("", PutOne);
-        //item.MapDelete("", DeleteOne);
+        item.MapDelete("", Delete);
     }
 
     private static async Task<IResult> GetAll(MongoCrud crud, HttpContext context)
@@ -31,6 +28,14 @@ public static class MachinesDetails
         if (jsonList == null)
             return Results.NotFound();
         return Results.Ok(jsonList);
+    }
+
+    private static async Task<IResult> GetOne(MongoCrud crud, HttpContext context, string id)
+    {
+        var item = await crud.GetItemJsonAsync(id, CollectionName!, DatabasesName!);
+        if (item == null)
+            return Results.NotFound();
+        return Results.Ok(item);
     }
 
     private static async Task<IResult> PostOne(MongoCrud crud, HttpContext context)
@@ -49,5 +54,24 @@ public static class MachinesDetails
             return Results.NotFound();
         return Results.Created($"/machinesdetails/{id}", itemJason);
     }
+
+
+    private static async Task<IResult> Delete(MongoCrud crud, HttpContext context, string id)
+    {
+        var item = await crud.GetItemJsonAsync(id, CollectionName!, DatabasesName!);
+        var json = JsonSerializer.Serialize(item);
+        var hashElement = MachinesLogs.JsonGet(json, "Hash");
+        if (hashElement != null)
+        {
+            string hash = hashElement?.GetString()!;
+            await MachinesLogs.Delete(crud, context, "Hash", hash);
+        }
+
+        var deleted = await crud.RemoveAsync(id, CollectionName!, DatabasesName!);
+        if (!deleted)
+            return Results.NotFound();
+        return Results.NoContent();
+    }
+
 
 }

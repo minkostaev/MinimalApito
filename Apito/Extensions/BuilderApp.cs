@@ -1,14 +1,13 @@
 ﻿namespace Apito.Extensions;
 
 using Apito.Models;
-using Microsoft.AspNetCore.Routing;
 
-public static class BuilderMethods
+public static class BuilderApp
 {
     public static void AddAllUses(this WebApplication app)
     {
         app.UseStaticFiles();// wwwroot
-
+        
         app.UseCors(app.Configuration["CORS:Policy-Name"]!);
         app.UseHttpsRedirection();
 

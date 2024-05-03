@@ -29,7 +29,9 @@ public class MongoCrud
         Databases![dbName] ??= mongoClient.GetDatabase(dbName);
         return true;
     }
+    
     private FilterDefinition<BsonDocument> IdFilter(string id) { return Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(id)); }
+    private FilterDefinition<BsonDocument> IdsFilter(List<string> ids) { return Builders<BsonDocument>.Filter.In("_id", ids.Select(id => new ObjectId(id))); }
     private FilterDefinition<BsonDocument> CustomFilter(string key, string value) { return Builders<BsonDocument>.Filter.Eq(key, value); }
     private BsonDocument? StringToBson(string json)
     {
@@ -54,12 +56,14 @@ public class MongoCrud
         return result;
     }
     private object BsonMapper(BsonDocument bDoc) { return BsonTypeMapper.MapToDotNetValue(bDoc); }
-    private List<BsonDocument> CollectionToJson(IMongoCollection<BsonDocument> mongoCollection)
+    private List<BsonDocument> CollectionToJson(IMongoCollection<BsonDocument> mongoCollection, FilterDefinition<BsonDocument>? filter = null)
     {
         //var result = await collection.Find(new BsonDocument()).ToListAsync();
         //var obj = result.ToJson();
+
         var mongoList = new List<BsonDocument>();
-        using (var cursor = mongoCollection.Find(new BsonDocument()).ToCursor())
+        filter ??= new BsonDocument();
+        using (var cursor = mongoCollection.Find(filter).ToCursor())
         {
             while (cursor.MoveNext())
             {
@@ -186,6 +190,17 @@ public class MongoCrud
         return BsonMapper(result);
     }
 
+
+
+
+    public async Task<List<object>?> GetCollectionToJsonAsync(string propertyName, string propertyValue, string name, string dbName)
+    {
+        var collection = await GetCollectionAsync(name, dbName);
+        if (collection == null)
+            return null;
+        return CollectionToJson(collection, CustomFilter(propertyName, propertyValue)).ConvertAll(BsonTypeMapper.MapToDotNetValue);
+    }
+
     // Create
 
     public (string, object?) Add(string json, string name, string dbName)
@@ -259,28 +274,42 @@ public class MongoCrud
     }
     public async Task<bool> RemoveAsync(string id, string name, string dbName)
     {
-        var collection = await GetCollectionAsync(name, dbName);
-        if (collection == null)
-            return false;
-        var result = await collection.DeleteOneAsync(IdFilter(id));
-        if (result.DeletedCount == 0)
-            return false;
-        else
-            return true;
+        //var collection = await GetCollectionAsync(name, dbName);
+        //if (collection == null)
+        //    return false;
+        //var result = await collection.DeleteOneAsync(IdFilter(id));
+        //if (result.DeletedCount == 0)
+        //    return false;
+        //else
+        //    return true;
+        return await RemoveAsync(IdFilter(id), name, dbName);
     }
     public async Task<bool> RemoveAsync(List<string> ids, string name, string dbName)
+    {
+        //var collection = await GetCollectionAsync(name, dbName);
+        //if (collection == null)
+        //    return false;
+        //var result = await collection.DeleteManyAsync(IdsFilter(ids));
+        //if (result.DeletedCount == 0)
+        //    return false;
+        //else
+        //    return true;
+        return await RemoveAsync(IdsFilter(ids), name, dbName);
+    }
+    public async Task<bool> RemoveAsync(string propertyName, string propertyValue, string name, string dbName)
+    {
+        return await RemoveAsync(CustomFilter(propertyName, propertyValue), name, dbName);
+    }
+    private async Task<bool> RemoveAsync(FilterDefinition<BsonDocument> filter, string name, string dbName)
     {
         var collection = await GetCollectionAsync(name, dbName);
         if (collection == null)
             return false;
-        bool result = true;
-        foreach (var id in ids)
-        {
-            var deleted = await collection.DeleteManyAsync(IdFilter(id));
-            if (deleted.DeletedCount == 0)
-                result = false;
-        }
-        return result;
+        var result = await collection.DeleteManyAsync(filter);
+        if (result.DeletedCount == 0)
+            return false;
+        else
+            return true;
     }
 
 }

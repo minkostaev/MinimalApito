@@ -1,8 +1,9 @@
 ﻿namespace Apito.Extensions;
 
+using Apito.Models;
 using Apito.Services.Endpoints;
 
-public static class EndpointRouteBuilder
+public static class BuilderEndpoints
 {
     public static void RegisterAllEndpoints(this IEndpointRouteBuilder app)
     {
@@ -18,7 +19,7 @@ public static class EndpointRouteBuilder
                 )).ToArray();
             return forecast;
         }).WithName("GetWeatherForecast").WithOpenApi();
-
+        
         var items = app.MapGroup("/items");
         Items.Map(items, "Users", "ShortcutsGrid");
 
@@ -30,6 +31,8 @@ public static class EndpointRouteBuilder
 
         var machinesLogs = app.MapGroup("/machineslogs");
         MachinesLogs.Map(machinesLogs, "MachinesLogs", "ShortcutsGrid");
+
+        app.MapGet("/version", () => { return AppValues.Version; }).WithName("GetVersion").WithOpenApi();
     }
 
 }
@@ -38,3 +41,5 @@ internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
+
+//https://www.youtube.com/watch?v=9MOpm5id2AI&list=PLgRlicSxjeMOUGRV28LGyqDgL0IySmGJ6&index=3

@@ -1,17 +1,14 @@
 ﻿namespace Apito.Extensions;
 
-using Apito.Models;
 using Apito.Services;
-using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
-using System.Reflection;
 
 public static class BuilderServices
 {
     public static async Task AddAll(this IServiceCollection services, ConfigurationManager configuration)
     {
         services.AddSwaggerServices();
-
+        
         // CORS
         services.AddCors(options =>
         {

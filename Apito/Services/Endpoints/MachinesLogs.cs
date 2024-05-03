@@ -91,8 +91,17 @@ public static class MachinesLogs
         return Results.NoContent();
     }
 
+    public static async Task<IResult> Delete(MongoCrud crud, HttpContext context, string propertyName, string propertyValue)
+    {
+        if (string.IsNullOrEmpty(propertyName))
+            return Results.NoContent();
+        var deleted = await crud.RemoveAsync(propertyName, propertyValue, CollectionName!, DatabasesName!);
+        if (!deleted)
+            return Results.NotFound();
+        return Results.NoContent();
+    }
 
-    private static List<string> GetIdsFromJson(string json)
+    public static List<string> GetIdsFromJson(string json)
     {
         var result = new List<string>();
         JsonDocument document = JsonDocument.Parse(json);
@@ -102,6 +111,16 @@ public static class MachinesLogs
             result.Add(idElement.GetString()!);
         }
         return result;
+    }
+    public static JsonElement? JsonGet(string json, string name)
+    {
+        try
+        {
+            JsonDocument document = JsonDocument.Parse(json);
+            JsonElement rootElement = document.RootElement;
+            return rootElement.GetProperty(name);
+        }
+        catch { return null; }
     }
 
 }

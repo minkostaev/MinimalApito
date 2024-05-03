@@ -5,13 +5,13 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Reflection;
 
-public static class SwaggerConfiguration
+public static class BuilderSwagger
 {
     public static void AddSwaggerServices(this IServiceCollection services)
     {
         // Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         services.AddEndpointsApiExplorer();
-
+        
         //services.AddSwaggerGen();
         services.AddSwaggerGen(options =>
         {
