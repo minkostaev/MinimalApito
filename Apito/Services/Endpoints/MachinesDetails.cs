@@ -60,7 +60,7 @@ public static class MachinesDetails
     {
         var item = await crud.GetItemJsonAsync(id, CollectionName!, DatabasesName!);
         var json = JsonSerializer.Serialize(item);
-        var hashElement = MachinesLogs.JsonGet(json, "Hash");
+        var hashElement = MongoAssistant.JsonGetProperty(json, "Hash");
         if (hashElement != null)
         {
             string hash = hashElement?.GetString()!;

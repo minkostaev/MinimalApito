@@ -1,37 +1,99 @@
 ﻿namespace Apito.Services;
 
-using MongoDB.Bson.Serialization;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using System.Text.Json;
 
 public static class MongoAssistant
 {
-    //private static FilterDefinition<BsonDocument> IdFilter(string id) { return Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(id)); }
-    //private static FilterDefinition<BsonDocument> IdsFilter(List<string> ids) { return Builders<BsonDocument>.Filter.In("_id", ids.Select(id => new ObjectId(id))); }
-    //private static FilterDefinition<BsonDocument> CustomFilter(string key, string value) { return Builders<BsonDocument>.Filter.Eq(key, value); }
-    //private static BsonDocument? StringToBson(string json)
-    //{
-    //    BsonDocument doc;
-    //    try { doc = BsonSerializer.Deserialize<BsonDocument>(json); }
-    //    catch { return null; }
-    //    return doc;
-    //}
-    //private static string? BsonToString(BsonDocument bDoc)
-    //{
-    //    try { return JsonSerializer.Serialize(bDoc); }
-    //    catch { return null; }
-    //}
-    //private static string FixId(BsonDocument bDoc)
-    //{
-    //    var bDocId = bDoc["_id"];
-    //    if (bDocId == null)
-    //        return string.Empty;
-    //    string result = bDocId.ToString()!;
-    //    //bDoc["_id"] = bDoc["_id"].ToString();
-    //    bDoc.Set("_id", result);
-    //    return result;
-    //}
-    //private static object BsonMapper(BsonDocument bDoc) { return BsonTypeMapper.MapToDotNetValue(bDoc); }
+    public static FilterDefinition<BsonDocument> CreateFilter(string id)
+    {
+        return Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(id));
+    }
+    public static FilterDefinition<BsonDocument> CreateFilter(List<string> ids)
+    {
+        return Builders<BsonDocument>.Filter.In("_id", ids.Select(id => new ObjectId(id)));
+    }
+    public static FilterDefinition<BsonDocument> CreateFilter(string key, string value)
+    {
+        return Builders<BsonDocument>.Filter.Eq(key, value);
+    }
+    
+    public static string FixId(BsonDocument bDoc)
+    {
+        var bDocId = bDoc["_id"];
+        if (bDocId == null)
+            return string.Empty;
+        string result = bDocId.ToString()!;
+        //bDoc["_id"] = bDoc["_id"].ToString();
+        bDoc.Set("_id", result);
+        return result;
+    }
+    public static object BsonMapper(BsonDocument bDoc)
+    {
+        return BsonTypeMapper.MapToDotNetValue(bDoc);
+    }
+    public static List<BsonDocument> CollectionToJson(IMongoCollection<BsonDocument> mongoCollection, FilterDefinition<BsonDocument>? filter = null)
+    {
+        //var result = await collection.Find(new BsonDocument()).ToListAsync();
+        //var obj = result.ToJson();
+
+        var mongoList = new List<BsonDocument>();
+        filter ??= new BsonDocument();
+        using (var cursor = mongoCollection.Find(filter).ToCursor())
+        {
+            while (cursor.MoveNext())
+            {
+                foreach (var doc in cursor.Current)
+                {
+                    FixId(doc);
+                    mongoList.Add(doc);
+                }
+            }
+        }
+        return mongoList;
+    }
+
+    // ---
+
+    public static BsonDocument? StringToBson(string json)
+    {
+        BsonDocument doc;
+        try { doc = BsonSerializer.Deserialize<BsonDocument>(json); }
+        catch { return null; }
+        return doc;
+    }
+    public static string? BsonToString(BsonDocument bDoc)
+    {
+        try { return JsonSerializer.Serialize(bDoc); }
+        catch { return null; }
+    }
+
+    // ---
+
+    public static JsonElement? JsonGetProperty(string json, string name)
+    {
+        try
+        {
+            JsonDocument document = JsonDocument.Parse(json);
+            JsonElement rootElement = document.RootElement;
+            return rootElement.GetProperty(name);
+        }
+        catch { return null; }
+    }
+    public static List<string> GetIdsFromJson(string json)
+    {
+        var result = new List<string>();
+        var idsElement = JsonGetProperty(json, "Ids");
+        if (idsElement == null)
+            return result;
+        var eslement = ((JsonElement)idsElement).EnumerateArray();
+        foreach (JsonElement idElement in eslement)
+        {
+            result.Add(idElement.GetString()!);
+        }
+        return result;
+    }
 
 }

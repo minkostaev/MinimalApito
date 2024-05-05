@@ -35,7 +35,7 @@ public static class MachinesLogs
     private static async Task<IResult> DeleteMany(MongoCrud crud, HttpContext context)
     {
         string requestBody = await HttpContextHelper.GetContextBodyAsync(context);
-        var result = GetIdsFromJson(requestBody);
+        var result = MongoAssistant.GetIdsFromJson(requestBody);
         var deleted = await crud.RemoveAsync(result, CollectionName!, DatabasesName!);
         if (!deleted)
             return Results.NotFound();
@@ -99,28 +99,6 @@ public static class MachinesLogs
         if (!deleted)
             return Results.NotFound();
         return Results.NoContent();
-    }
-
-    public static List<string> GetIdsFromJson(string json)
-    {
-        var result = new List<string>();
-        JsonDocument document = JsonDocument.Parse(json);
-        JsonElement rootElement = document.RootElement;
-        foreach (JsonElement idElement in rootElement.GetProperty("Ids").EnumerateArray())
-        {
-            result.Add(idElement.GetString()!);
-        }
-        return result;
-    }
-    public static JsonElement? JsonGet(string json, string name)
-    {
-        try
-        {
-            JsonDocument document = JsonDocument.Parse(json);
-            JsonElement rootElement = document.RootElement;
-            return rootElement.GetProperty(name);
-        }
-        catch { return null; }
     }
 
 }

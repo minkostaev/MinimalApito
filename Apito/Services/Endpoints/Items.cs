@@ -1,5 +1,7 @@
 ﻿namespace Apito.Services.Endpoints;
 
+using Apito.Models;
+
 public static class Items
 {
     private static string? CollectionName { get; set; }
@@ -7,6 +9,12 @@ public static class Items
 
     public static void Map(RouteGroupBuilder app, string collectionName, string databasesName)
     {
+        if (AppValues.MongoFailed)
+        {
+            app.MapGet("", ResultError);
+            return;
+        }
+
         CollectionName = collectionName;
         DatabasesName = databasesName;
 
@@ -60,6 +68,16 @@ public static class Items
         if (!deleted)
             return Results.NotFound();
         return Results.NoContent();
+    }
+
+
+    public static IResult ResultError()
+    {
+        //var list = new Dictionary<string, object?>()
+        //{
+        //    { "key", "value" }
+        //};
+        return Results.Problem("Mongo failed", "Mongo failed", 500);
     }
 
 }

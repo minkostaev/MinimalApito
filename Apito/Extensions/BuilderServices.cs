@@ -1,5 +1,6 @@
 ﻿namespace Apito.Extensions;
 
+using Apito.Models;
 using Apito.Services;
 using MongoDB.Driver;
 
@@ -22,28 +23,21 @@ public static class BuilderServices
         });
 
         // Get db connection string from my vault
-        var vault = new VaultConfiguration(configuration);
-        var connection = await vault.Get(configuration["DbMongo:kkkppp"]!);
+        var vault = new VaultConfiguration(configuration["Vault"]!);
+        var connection = await vault.Get(configuration["DbMongo:kkkpppa"]!);
         //configuration["DbMongoConnection"] = connection;
 
         // Mongo
-
-        //var mongoClient = new MongoClient(connection);
-        //var database1 = mongoClient.GetDatabase("ShortcutsGrid");
-        //var database2 = mongoClient.GetDatabase("wildlife");
-        //builder.Services.AddSingleton(database1);
-        //builder.Services.AddSingleton(database2);
         if (connection is string)
+        {
             services.AddSingleton<IMongoClient>(new MongoClient(connection.ToString()));
+        }
         else
+        {
             services.AddSingleton<IMongoClient>(new MongoClient());
+            AppValues.MongoFailed = true;
+        }
         services.AddSingleton<MongoCrud>();
-        //builder.Services.AddSingleton<IMongoDatabase>(provider =>
-        //{
-        //    var mongoClient = provider.GetRequiredService<IMongoClient>();
-        //    var dbName = mongoClient.ListDatabaseNames().FirstOrDefault();//ShortcutsGrid
-        //    return mongoClient.GetDatabase(dbName);
-        //});
 
     }
 

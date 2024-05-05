@@ -6,16 +6,16 @@ using System.Text.Json;
 
 public class VaultConfiguration
 {
-    public VaultConfiguration(ConfigurationManager configuration)
-    {
-        _vaultUri = configuration["Vault"]!;
-        _vaultId = Environment.UserDomainName + " " + Environment.UserName;
-        _vaultCrypt = _vaultId + " " + DateTime.UtcNow.Year;
-    }
-
     private readonly string _vaultUri;
     private readonly string _vaultId;
     private readonly string _vaultCrypt;
+
+    public VaultConfiguration(string hostLink)
+    {
+        _vaultUri = hostLink + "/vault";
+        _vaultId = Environment.UserDomainName + " " + Environment.UserName;
+        _vaultCrypt = _vaultId + " " + DateTime.UtcNow.Year;
+    }
 
     public async Task<object> Get(string property)
     {

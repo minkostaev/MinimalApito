@@ -8,4 +8,6 @@ public static class AppValues
                                    //Assembly.GetAssembly(typeof(Program)).GetName().Version;
     public static string? Name => Assembly.GetExecutingAssembly().GetName().Name;
 
+    public static bool MongoFailed { get; set; }
+
 }

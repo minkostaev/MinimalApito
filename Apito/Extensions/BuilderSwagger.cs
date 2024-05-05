@@ -35,7 +35,7 @@ public static class BuilderSwagger
                 }
             });
 
-            options.SwaggerDoc("v2", new OpenApiInfo { Title = "Your API V2", Version = "v2" });
+            //options.SwaggerDoc("v2", new OpenApiInfo { Title = "Your API V2", Version = "v2" });
 
 
             //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -84,7 +84,7 @@ public static class BuilderSwagger
         {
             c.RoutePrefix = address;
             c.SwaggerEndpoint("v1/swagger.json", "v1 Name");
-            c.SwaggerEndpoint("v2/swagger.json", "v2 Label");
+            //c.SwaggerEndpoint("v2/swagger.json", "v2 Label");
             c.DocExpansion(DocExpansion.None);
             c.EnableTryItOutByDefault();
             string embeddedHtml = $"{AppValues.Name}.Resources.Swagger.html";
