@@ -1,2 +1,7 @@
 # MinimalApito
-Minimal API project
+
+## Main focus of this .NET8 project is
+
+- **Minimal API** structure
+- MongoDB
+- Swagger
