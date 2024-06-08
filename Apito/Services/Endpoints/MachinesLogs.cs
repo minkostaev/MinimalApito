@@ -1,5 +1,6 @@
 ﻿namespace Apito.Services.Endpoints;
 
+using Apito.Extensions;
 using Apito.Models;
 using System.Text.Json;
 
@@ -21,7 +22,10 @@ public static class MachinesLogs
 
         //item.MapGet("", GetOne);
         //item.MapPut("", PutOne);
-        item.MapDelete("", DeleteOne);
+        item.MapDelete("", DeleteOne).AddMore(
+            "DeleteLog",
+            "DeleteLog",
+            "DeleteLog");
     }
 
     private static async Task<IResult> GetAll(MongoCrud crud, HttpContext context)
@@ -47,20 +51,31 @@ public static class MachinesLogs
         string machineHeader = context.Request.Headers["Desktop-Machine"]!;
         string valueHeader = context.Request.Headers["Desktop-Value"]!;
         string versionHeader = context.Request.Headers["Desktop-Version"]!;
-        if (machineHeader == null)
-            return Results.NotFound();
 
         var log = new
         {
             Hash = machineHeader,
             Value = valueHeader,
-            Api = AppValues.Version,
+            Api = $"Apito|{AppValues.Version}",
             Desktop = versionHeader,
+            Date = DateTime.Now
+        };
+
+        var record = new
+        {
+            Hash = machineHeader,
+            Value = valueHeader,
+            Server = $"Apito|{AppValues.Version}",
+            Client = versionHeader,
             Date = DateTime.Now
         };
 
         string logJson = JsonSerializer.Serialize(log);
         var (id, itemJason) = await crud.AddAsync(logJson, "MachinesLogs", DatabasesName!);
+
+        string recordJson = JsonSerializer.Serialize(record);// new
+        await crud.AddAsync(recordJson, "MachinesRecords", DatabasesName!);// new
+
         if (string.IsNullOrEmpty(id))
             return Results.NotFound();
         return Results.Created($"/machineslogs/{id}", itemJason);

@@ -5,13 +5,32 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Reflection;
 
+// required nugets:
+//Microsoft.AspNetCore.OpenApi
+//Swashbuckle.AspNetCore
+
 public static class BuilderSwagger
 {
     public static void AddSwaggerServices(this IServiceCollection services)
     {
         // Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         services.AddEndpointsApiExplorer();
-        
+
+        //// Add API versioning
+        //services.AddApiVersioning(options =>
+        //{
+        //    options.AssumeDefaultVersionWhenUnspecified = true;
+        //    options.DefaultApiVersion = new ApiVersion(1, 0);
+        //    options.ReportApiVersions = true;
+        //    options.ApiVersionReader = ApiVersionReader.Combine(
+        //        new HeaderApiVersionReader("x-api-version")
+        //    );
+        //}).AddApiExplorer(options =>
+        //{
+        //    options.GroupNameFormat = "'v'VVV";
+        //    options.SubstituteApiVersionInUrl = true;
+        //});
+
         //services.AddSwaggerGen();
         services.AddSwaggerGen(options =>
         {
@@ -35,7 +54,21 @@ public static class BuilderSwagger
                 }
             });
 
-            //options.SwaggerDoc("v2", new OpenApiInfo { Title = "Your API V2", Version = "v2" });
+            ////options.SwaggerDoc("v2", new OpenApiInfo { Title = "Your API V2", Version = "v2" });
+
+
+            //var provider = services.BuildServiceProvider()
+            //.GetRequiredService<IApiVersionDescriptionProvider>();
+
+            //foreach (var description in provider.ApiVersionDescriptions)
+            //{
+            //    options.SwaggerDoc(description.GroupName, new OpenApiInfo()
+            //    {
+            //        Title = $"My API {description.ApiVersion}",
+            //        Version = description.ApiVersion.ToString()
+            //    });
+            //}
+
 
 
             //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -89,6 +122,14 @@ public static class BuilderSwagger
             c.EnableTryItOutByDefault();
             string embeddedHtml = $"{AppValues.Name}.Resources.Swagger.html";
             c.IndexStream = () => Assembly.GetExecutingAssembly().GetManifestResourceStream(embeddedHtml);
+
+            //var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+            //foreach (var description in provider.ApiVersionDescriptions)
+            //{
+            //    c.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
+            //                            description.GroupName.ToUpperInvariant());
+            //}
+
         });
     }
 

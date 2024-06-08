@@ -243,3 +243,7 @@ public class MongoCrud
     }
 
 }
+//https://mongodb.github.io/mongo-csharp-driver/2.5/reference/driver/crud/reading/
+//https://mongodb.github.io/mongo-csharp-driver/2.5/reference/driver/crud/writing/
+//https://chsakell.gitbook.io/mongodb-csharp-docs/crud-basics/update-documents/replace
+//https://chsakell.gitbook.io/mongodb-csharp-docs/crud-basics/delete-documents

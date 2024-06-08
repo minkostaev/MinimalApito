@@ -9,7 +9,7 @@ public static class BuilderServices
     public static async Task AddAll(this IServiceCollection services, ConfigurationManager configuration)
     {
         services.AddSwaggerServices();
-        
+
         // CORS
         services.AddCors(options =>
         {

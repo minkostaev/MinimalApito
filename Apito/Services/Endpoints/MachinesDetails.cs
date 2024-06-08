@@ -41,7 +41,9 @@ public static class MachinesDetails
     private static async Task<IResult> PostOne(MongoCrud crud, HttpContext context)
     {
         string machineHeader = context.Request.Headers["Desktop-Machine"]!;
-        
+        if (machineHeader == null)
+            return Results.NotFound();
+
         await MachinesLogs.PostOne(crud, context);
 
         var machineExist = await crud.GetItemJsonAsync("Hash", machineHeader, CollectionName!, DatabasesName!);
