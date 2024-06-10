@@ -22,7 +22,11 @@ public class VaultConfiguration
         var vaultDto = new VaultDto { Id = _vaultId, Property = property };
         string jsonDto = JsonSerializer.Serialize(vaultDto);
 
-        using (var client = new HttpClient())
+        var clientHandler = new HttpClientHandler
+        {
+            ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; }
+        };
+        using (var client = new HttpClient(clientHandler))
         {
             try
             {
