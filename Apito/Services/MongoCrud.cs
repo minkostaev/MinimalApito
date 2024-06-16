@@ -89,15 +89,46 @@ public class MongoCrud
         var collection = GetCollection(collectionName, dbName);
         if (collection == null)
             return null;
-        return collection.Find(MongoAssistant.CreateFilter(key, value)).FirstOrDefault();
+        var filter = MongoAssistant.CreateFilter(key, value);
+        if (filter == null)
+            return null;
+        return collection.Find(filter).FirstOrDefault();
     }
     public async Task<BsonDocument?> GetItemAsync(string key, string value, string collectionName, string dbName)
     {
         var collection = await GetCollectionAsync(collectionName, dbName);
         if (collection == null)
             return null;
-        return collection.Find(MongoAssistant.CreateFilter(key, value)).FirstOrDefault();
+        var filter = MongoAssistant.CreateFilter(key, value);
+        if (filter == null)
+            return null;
+        return collection.Find(filter).FirstOrDefault();
     }
+
+
+    public async Task<List<BsonDocument>?> GetItemsAsync(string key, string value, string collectionName, string dbName)
+    {
+        var collection = await GetCollectionAsync(collectionName, dbName);
+        if (collection == null)
+            return null;
+        var filter = MongoAssistant.CreateFilter(key, value);
+        if (filter == null)
+            return null;
+        return collection.Find(filter).ToList();
+    }
+    public async Task<List<object>?> GetItemsJsonAsync(string key, string value, string collectionName, string dbName)
+    {
+        var collection = await GetCollectionAsync(collectionName, dbName);
+        if (collection == null)
+            return null;
+        var filter = MongoAssistant.CreateFilter(key, value);
+        if (filter == null)
+            return null;
+        var filteredList = MongoAssistant.CollectionToJson(collection, filter);
+        return filteredList.ConvertAll(BsonTypeMapper.MapToDotNetValue);
+    }
+
+
     public object? GetItemJson(string key, string value, string collectionName, string dbName)
     {
         var result = GetItem(key, value, collectionName, dbName);
@@ -120,14 +151,20 @@ public class MongoCrud
         var collection = GetCollection(collectionName, dbName);
         if (collection == null)
             return null;
-        return collection.Find(MongoAssistant.CreateFilter(id)).FirstOrDefault();
+        var filter = MongoAssistant.CreateFilter(id);
+        if (filter == null)
+            return null;
+        return collection.Find(filter).FirstOrDefault();
     }
     public async Task<BsonDocument?> GetItemAsync(string id, string collectionName, string dbName)
     {
         var collection = await GetCollectionAsync(collectionName, dbName);
         if (collection == null)
             return null;
-        return collection.Find(MongoAssistant.CreateFilter(id)).FirstOrDefault();
+        var filter = MongoAssistant.CreateFilter(id);
+        if (filter == null)
+            return null;
+        return collection.Find(filter).FirstOrDefault();
     }
     public object? GetItemJson(string id, string collectionName, string dbName)
     {
@@ -183,7 +220,10 @@ public class MongoCrud
         var collection = GetCollection(collectionName, dbName);
         if (collection == null)
             return false;
-        var result = collection.ReplaceOne(MongoAssistant.CreateFilter(id), bDoc);
+        var filter = MongoAssistant.CreateFilter(id);
+        if (filter == null)
+            return false;
+        var result = collection.ReplaceOne(filter, bDoc);
         if (result.MatchedCount == 0)
             return false;
         else
@@ -197,7 +237,10 @@ public class MongoCrud
         var collection = await GetCollectionAsync(collectionName, dbName);
         if (collection == null)
             return false;
-        var result = await collection.ReplaceOneAsync(MongoAssistant.CreateFilter(id), inDoc);
+        var filter = MongoAssistant.CreateFilter(id);
+        if (filter == null)
+            return false;
+        var result = await collection.ReplaceOneAsync(filter, inDoc);
         if (result.MatchedCount == 0)
             return false;
         else
@@ -211,7 +254,10 @@ public class MongoCrud
         var collection = GetCollection(name, dbName);
         if (collection == null)
             return false;
-        var result = collection.DeleteOne(MongoAssistant.CreateFilter(id));
+        var filter = MongoAssistant.CreateFilter(id);
+        if (filter == null)
+            return false;
+        var result = collection.DeleteOne(filter);
         if (result.DeletedCount == 0)
             return false;
         else
@@ -229,10 +275,12 @@ public class MongoCrud
     {
         return await RemoveAsync(MongoAssistant.CreateFilter(propertyName, propertyValue), name, dbName);
     }
-    private async Task<bool> RemoveAsync(FilterDefinition<BsonDocument> filter, string name, string dbName)
+    private async Task<bool> RemoveAsync(FilterDefinition<BsonDocument>? filter, string name, string dbName)
     {
         var collection = await GetCollectionAsync(name, dbName);
         if (collection == null)
+            return false;
+        if (filter == null)
             return false;
         //var result = await collection.DeleteOneAsync(IdFilter(id));
         var result = await collection.DeleteManyAsync(filter);

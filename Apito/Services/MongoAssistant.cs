@@ -7,17 +7,20 @@ using System.Text.Json;
 
 public static class MongoAssistant
 {
-    public static FilterDefinition<BsonDocument> CreateFilter(string id)
+    public static FilterDefinition<BsonDocument>? CreateFilter(string id)
     {
-        return Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(id));
+        try { return Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(id)); }
+        catch (Exception) { return null; }
     }
-    public static FilterDefinition<BsonDocument> CreateFilter(List<string> ids)
+    public static FilterDefinition<BsonDocument>? CreateFilter(List<string> ids)
     {
-        return Builders<BsonDocument>.Filter.In("_id", ids.Select(id => new ObjectId(id)));
+        try { return Builders<BsonDocument>.Filter.In("_id", ids.Select(id => new ObjectId(id))); }
+        catch (Exception) { return null; }
     }
-    public static FilterDefinition<BsonDocument> CreateFilter(string key, string value)
+    public static FilterDefinition<BsonDocument>? CreateFilter(string key, string value)
     {
-        return Builders<BsonDocument>.Filter.Eq(key, value);
+        try { return Builders<BsonDocument>.Filter.Eq(key, value); }
+        catch (Exception) { return null; }
     }
     
     public static string FixId(BsonDocument bDoc)

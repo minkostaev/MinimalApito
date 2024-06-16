@@ -14,6 +14,7 @@ public static class MachinesDetails
 
         app.MapGet("", GetAll);
         app.MapPost("", PostOne);
+        app.MapGet("/hash/{hash}", GetByHash);
 
         var item = app.MapGroup("/{id}");//id:guid
 
@@ -36,6 +37,14 @@ public static class MachinesDetails
         if (item == null)
             return Results.NotFound();
         return Results.Ok(item);
+    }
+
+    private static async Task<IResult> GetByHash(MongoCrud crud, HttpContext context, string hash)
+    {
+        var items = await crud.GetItemsJsonAsync("Hash", hash, CollectionName!, DatabasesName!);
+        if (items == null)
+            return Results.NotFound();
+        return Results.Ok(items);
     }
 
     private static async Task<IResult> PostOne(MongoCrud crud, HttpContext context)
