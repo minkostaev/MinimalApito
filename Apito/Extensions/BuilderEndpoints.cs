@@ -2,6 +2,7 @@
 
 using Apito.Models;
 using Apito.Services.Endpoints;
+using Microsoft.AspNetCore.Builder;
 
 public static class BuilderEndpoints
 {
@@ -18,6 +19,9 @@ public static class BuilderEndpoints
         //    .HasApiVersion(new Asp.Versioning.ApiVersion(2))
         //    .ReportApiVersions()
         //    .Build();
+
+        var imoti = app.MapGroup("/imoti");
+        Imoti.Map(imoti, "Imoti", "ShortcutsGrid");
 
         var machinesDetails = app.MapGroup("/machinesdetails");//.WithApiVersionSet(apiVersionSet);
         MachinesDetails.Map(machinesDetails, "MachinesDetails", "ShortcutsGrid");
