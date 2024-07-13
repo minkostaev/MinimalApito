@@ -1,7 +1,7 @@
-﻿using Apito.Models;
-using System.Text.Json;
+﻿namespace Apito.Services.Endpoints;
 
-namespace Apito.Services.Endpoints;
+using Apito.Models;
+using System.Text.Json;
 
 public static class MachinesRecords
 {
@@ -27,23 +27,12 @@ public static class MachinesRecords
         //    "DeleteLog");
     }
 
-
     private static async Task<IResult> GetAll(MongoCrud crud, HttpContext context)
     {
         var jsonList = await crud.GetCollectionToJsonAsync(CollectionName!, DatabasesName!);
         if (jsonList == null)
             return Results.NotFound();
         return Results.Ok(jsonList);
-    }
-
-    private static async Task<IResult> DeleteMany(MongoCrud crud, HttpContext context)
-    {
-        string requestBody = await HttpContextHelper.GetContextBodyAsync(context);
-        var result = MongoAssistant.GetIdsFromJson(requestBody);
-        var deleted = await crud.RemoveAsync(result, CollectionName!, DatabasesName!);
-        if (!deleted)
-            return Results.NotFound();
-        return Results.NoContent();
     }
 
     public static async Task<IResult> PostOne(MongoCrud crud, HttpContext context)
@@ -61,11 +50,21 @@ public static class MachinesRecords
             Date = DateTime.Now
         };
 
-        string recordJson = JsonSerializer.Serialize(record);// new
-        var (id, itemJason) = await crud.AddAsync(recordJson, "MachinesRecords", DatabasesName!);// new
+        string recordJson = JsonSerializer.Serialize(record);
+        var (id, itemJason) = await crud.AddAsync(recordJson, CollectionName!, DatabasesName!);
         if (string.IsNullOrEmpty(id))
             return Results.NotFound();
-        return Results.Created($"/machineslogs/{id}", itemJason);
+        return Results.Created($"/machinesrecords/{id}", itemJason);
+    }
+
+    private static async Task<IResult> DeleteMany(MongoCrud crud, HttpContext context)
+    {
+        string requestBody = await HttpContextHelper.GetContextBodyAsync(context);
+        var result = MongoAssistant.GetIdsFromJson(requestBody);
+        var deleted = await crud.RemoveAsync(result, CollectionName!, DatabasesName!);
+        if (!deleted)
+            return Results.NotFound();
+        return Results.NoContent();
     }
 
 

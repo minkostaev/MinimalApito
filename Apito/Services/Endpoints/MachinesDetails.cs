@@ -53,7 +53,7 @@ public static class MachinesDetails
         if (machineHeader == null)
             return Results.NotFound();
 
-        await MachinesLogs.PostOne(crud, context);
+        await MachinesRecords.PostOne(crud, context);
 
         var machineExist = await crud.GetItemJsonAsync("Hash", machineHeader, CollectionName!, DatabasesName!);
         if (machineExist != null)
