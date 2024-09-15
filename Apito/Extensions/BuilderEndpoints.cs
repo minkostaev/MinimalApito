@@ -14,16 +14,16 @@ public static class BuilderEndpoints
         var itemsAsync = app.MapGroup("/itemsasync");
         ItemsAsync.Map(itemsAsync, "Users", "ShortcutsGrid");
 
-        //ApiVersionSet apiVersionSet = app.NewApiVersionSet()
-        //    .HasApiVersion(new Asp.Versioning.ApiVersion(1))
-        //    .HasApiVersion(new Asp.Versioning.ApiVersion(2))
-        //    .ReportApiVersions()
-        //    .Build();
+        ///ApiVersionSet apiVersionSet = app.NewApiVersionSet()
+        ///    .HasApiVersion(new Asp.Versioning.ApiVersion(1))
+        ///    .HasApiVersion(new Asp.Versioning.ApiVersion(2))
+        ///    .ReportApiVersions()
+        ///    .Build();
 
         var imoti = app.MapGroup("/imoti");
         Imoti.Map(imoti, "Imoti", "ShortcutsGrid");
 
-        var machinesDetails = app.MapGroup("/machinesdetails");//.WithApiVersionSet(apiVersionSet);
+        var machinesDetails = app.MapGroup("/machinesdetails");///.WithApiVersionSet(apiVersionSet);
         MachinesDetails.Map(machinesDetails, "MachinesDetails", "ShortcutsGrid");
 
         var machinesLogs = app.MapGroup("/machineslogs");

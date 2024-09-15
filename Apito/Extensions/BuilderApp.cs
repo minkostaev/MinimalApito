@@ -11,10 +11,10 @@ public static class BuilderApp
         app.UseCors(app.Configuration["CORS:Policy-Name"]!);
         app.UseHttpsRedirection();
 
-        //if (app.Environment.IsDevelopment())
-        //{
+        ///if (app.Environment.IsDevelopment())
+        ///{
         app.AddSwaggerUses();
-        //}
+        ///}
 
         app.Use(async (context, next) =>
         {
