@@ -88,14 +88,14 @@ public class MongoInit
         var collection = GetCollection(name, dbName);
         if (collection == null)
             return null;
-        return MongoAssistant.CollectionToJson(collection).ConvertAll(BsonTypeMapper.MapToDotNetValue);
+        return MongoAssistant.BsonMapper(MongoAssistant.CollectionToJson(collection));
     }
     public async Task<List<object>?> GetCollectionToJsonAsync(string name, string dbName)
     {
         var collection = await GetCollectionAsync(name, dbName);
         if (collection == null)
             return null;
-        return MongoAssistant.CollectionToJson(collection).ConvertAll(BsonTypeMapper.MapToDotNetValue);
+        return MongoAssistant.BsonMapper(MongoAssistant.CollectionToJson(collection));
     }
 
 }

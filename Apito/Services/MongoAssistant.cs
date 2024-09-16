@@ -22,14 +22,14 @@ public static class MongoAssistant
         try { return Builders<BsonDocument>.Filter.Eq(key, value); }
         catch (Exception) { return null; }
     }
-    
-    public static string FixId(BsonDocument bDoc)
+
+    public static string FixDocId(BsonDocument bDoc)
     {
         var bDocId = bDoc["_id"];
         if (bDocId == null)
             return string.Empty;
         string result = bDocId.ToString()!;
-        ///bDoc["_id"] = bDoc["_id"].ToString();
+        ///bDoc["_id"] = result;
         bDoc.Set("_id", result);
         return result;
     }
@@ -37,10 +37,14 @@ public static class MongoAssistant
     {
         return BsonTypeMapper.MapToDotNetValue(bDoc);
     }
+    public static List<object> BsonMapper(List<BsonDocument> bDocs)
+    {
+        return bDocs.ConvertAll(BsonTypeMapper.MapToDotNetValue);
+    }
     public static List<BsonDocument> CollectionToJson(IMongoCollection<BsonDocument> mongoCollection, FilterDefinition<BsonDocument>? filter = null)
     {
-        //var result = await collection.Find(new BsonDocument()).ToListAsync();
-        //var obj = result.ToJson();
+        ///var result = await collection.Find(new BsonDocument()).ToListAsync();
+        ///var obj = result.ToJson();
 
         var mongoList = new List<BsonDocument>();
         filter ??= new BsonDocument();
@@ -50,7 +54,7 @@ public static class MongoAssistant
             {
                 foreach (var doc in cursor.Current)
                 {
-                    FixId(doc);
+                    FixDocId(doc);
                     mongoList.Add(doc);
                 }
             }

@@ -19,7 +19,7 @@ public class MongoCrud(IMongoClient client) : MongoInit(client)
     {
         if (document == null)
             return null;
-        MongoAssistant.FixId(document);
+        MongoAssistant.FixDocId(document);
         return MongoAssistant.BsonMapper(document);
     }
 
@@ -77,7 +77,8 @@ public class MongoCrud(IMongoClient client) : MongoInit(client)
         var filter = MongoAssistant.CreateFilter(key, value);
         if (filter == null)
             return null;
-        return collection.Find(filter).ToList();
+        return await collection.Find(filter).ToListAsync();
+        ///var secondTenRecords = collection.Find(filter).Skip(10).Limit(10).ToList();
     }
     public async Task<List<object>?> GetItemsJsonAsync(string key, string value, string collectionName, string dbName)
     {
@@ -88,7 +89,7 @@ public class MongoCrud(IMongoClient client) : MongoInit(client)
         if (filter == null)
             return null;
         var filteredList = MongoAssistant.CollectionToJson(collection, filter);
-        return filteredList.ConvertAll(BsonTypeMapper.MapToDotNetValue);
+        return MongoAssistant.BsonMapper(filteredList);
     }
 
     // CREATE
@@ -102,7 +103,7 @@ public class MongoCrud(IMongoClient client) : MongoInit(client)
         if (collection == null)
             return (string.Empty, null);
         collection.InsertOne(bDoc);
-        string id = MongoAssistant.FixId(bDoc);
+        string id = MongoAssistant.FixDocId(bDoc);
         return (id, MongoAssistant.BsonMapper(bDoc));
     }
     public async Task<(string, object?)> AddAsync(string json, string name, string dbName)
@@ -114,7 +115,7 @@ public class MongoCrud(IMongoClient client) : MongoInit(client)
         if (collection == null)
             return (string.Empty, null);
         await collection.InsertOneAsync(bDoc);
-        string id = MongoAssistant.FixId(bDoc);
+        string id = MongoAssistant.FixDocId(bDoc);
         return (id, MongoAssistant.BsonMapper(bDoc));
     }
 
