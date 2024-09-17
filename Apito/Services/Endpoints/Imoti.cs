@@ -1,6 +1,6 @@
 ﻿namespace Apito.Services.Endpoints;
 
-public class Imoti
+public static class Imoti
 {
     private static string? CollectionName { get; set; }
     private static string? DatabasesName { get; set; }
@@ -20,7 +20,7 @@ public class Imoti
         item.MapDelete("", DeleteOne);
     }
 
-    private static async Task<IResult> GetAll(MongoCrud crud, HttpContext context)
+    private static async Task<IResult> GetAll(MongoCrud crud)
     {
         var jsonList = await crud.GetCollectionToJsonAsync(CollectionName!, DatabasesName!);
         if (jsonList == null)
@@ -37,7 +37,7 @@ public class Imoti
         return Results.Created($"/imoti/{id}", itemJason);
     }
 
-    private static async Task<IResult> GetOne(MongoCrud crud, HttpContext context, string id)
+    private static async Task<IResult> GetOne(MongoCrud crud, string id)
     {
         var item = await crud.GetItemJsonAsync(id, CollectionName!, DatabasesName!);
         if (item == null)
@@ -51,10 +51,10 @@ public class Imoti
         bool edited = await crud.EditAsync(requestBody, id, CollectionName!, DatabasesName!);
         if (!edited)
             return Results.NotFound();
-        return await GetOne(crud, context, id);
+        return await GetOne(crud, id);
     }
 
-    private static async Task<IResult> DeleteOne(MongoCrud crud, HttpContext context, string id)
+    private static async Task<IResult> DeleteOne(MongoCrud crud, string id)
     {
         var deleted = await crud.RemoveAsync(id, CollectionName!, DatabasesName!);
         if (!deleted)

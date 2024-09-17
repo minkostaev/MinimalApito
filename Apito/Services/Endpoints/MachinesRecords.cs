@@ -1,7 +1,9 @@
 ﻿namespace Apito.Services.Endpoints;
 
 using Apito.Models;
+using System.Collections.Specialized;
 using System.Text.Json;
+using System.Web;
 
 public static class MachinesRecords
 {
@@ -17,17 +19,17 @@ public static class MachinesRecords
         app.MapPost("", PostOne);
         app.MapDelete("", DeleteMany);
 
-        //var item = app.MapGroup("/{id}");//id:guid
+        var item = app.MapGroup("/{id}");//id:guid
 
-        //item.MapGet("", GetOne);
-        //item.MapPut("", PutOne);
-        //item.MapDelete("", DeleteOne).AddMore(
-        //    "DeleteLog",
-        //    "DeleteLog",
-        //    "DeleteLog");
+        item.MapGet("", GetWithParams);
+        ///item.MapPut("", PutOne);
+        ///item.MapDelete("", DeleteOne).AddMore(
+        ///    "DeleteLog",
+        ///    "DeleteLog",
+        ///    "DeleteLog");
     }
 
-    private static async Task<IResult> GetAll(MongoCrud crud, HttpContext context)
+    private static async Task<IResult> GetAll(MongoCrud crud)
     {
         var jsonList = await crud.GetCollectionToJsonAsync(CollectionName!, DatabasesName!);
         if (jsonList == null)
@@ -65,6 +67,23 @@ public static class MachinesRecords
         if (!deleted)
             return Results.NotFound();
         return Results.NoContent();
+    }
+
+
+    private static async Task<IResult> GetWithParams(MongoCrud crud, string id)
+    {
+        //?page=2&size=10&sort=price,asc&filter=category:electronics
+
+        ///NameValueCollection queryParams = HttpUtility.ParseQueryString(id);
+        ///int page = int.Parse(queryParams["page"]);
+        ///int size = int.Parse(queryParams["size"]);
+        ///string sort = queryParams["sort"];
+        ///string filter = queryParams["filter"];
+
+        var item = await crud.GetItemJsonAsync(id, CollectionName!, DatabasesName!);
+        if (item == null)
+            return Results.NotFound();
+        return Results.Ok(id);
     }
 
 
