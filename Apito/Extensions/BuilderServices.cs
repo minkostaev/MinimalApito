@@ -23,9 +23,11 @@ public static class BuilderServices
         });
 
         // Get db connection string from my vault
-        var vault = new VaultConfiguration(configuration["Vault"]!);
-        var connection = await vault.Get(configuration["DbMongo:kkkppp"]!);
+        //var vault = new VaultConfiguration(configuration["Vault"]!);
+        //var connection = await vault.Get(configuration["DbMongo:kkkppp"]!);
         ///configuration["DbMongoConnection"] = connection;
+
+        var connection = configuration["Vault"];
 
         // Mongo
         if (connection is string)

@@ -5,7 +5,7 @@ await builder.Services.AddAll(builder.Configuration);//Extension
 var app = builder.Build();
 app.AddAllUses();//Extension
 app.RegisterAllEndpoints();//Extension
-app.Run();
+await app.RunAsync();
 
 // issue:
 //Unable to start Kestrel. System.IO.IOException: Failed to bind to address

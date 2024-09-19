@@ -17,7 +17,7 @@ public class VaultConfiguration
         _vaultCrypt = _vaultId + " " + DateTime.UtcNow.Year;
     }
 
-    public async Task<object> Get(string property)
+    public async Task<object?> Get(string property)
     {
         var vaultDto = new VaultDto { Id = _vaultId, Property = property };
         string jsonDto = JsonSerializer.Serialize(vaultDto);
@@ -33,7 +33,7 @@ public class VaultConfiguration
                 var content = new StringContent(jsonDto, Encoding.UTF8, "application/json");
                 var response = await client.PostAsync(_vaultUri, content);
                 if (!response.IsSuccessStatusCode)
-                    return response.StatusCode;
+                    return null;
                 
                 var resJson = await response.Content.ReadFromJsonAsync<VaultDto>();
 
@@ -43,9 +43,9 @@ public class VaultConfiguration
 
                 return result;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return ex;
+                return null;
             }
         }
     }
