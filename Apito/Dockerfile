@@ -27,5 +27,4 @@ RUN dotnet publish "./Apito.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:U
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-COPY ./Apito/Resources /src/Apito/Resources
 ENTRYPOINT ["dotnet", "Apito.dll"]
