@@ -15,7 +15,7 @@ WORKDIR /src
 COPY ["Apito/Apito.csproj", "Apito/"]
 RUN dotnet restore "./Apito/Apito.csproj"
 COPY . .
-WORKDIR "/src/Apito"
+WORKDIR "/Apito/Apito"
 RUN dotnet build "./Apito.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
