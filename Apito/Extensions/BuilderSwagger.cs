@@ -120,8 +120,9 @@ public static class BuilderSwagger
             //c.SwaggerEndpoint("v2/swagger.json", "v2 Label");
             c.DocExpansion(DocExpansion.None);
             c.EnableTryItOutByDefault();
-            string embeddedHtml = $"{AppValues.Name}.Resources.Swagger.html";
-            c.IndexStream = () => Assembly.GetExecutingAssembly().GetManifestResourceStream(embeddedHtml);
+            //string embeddedHtml = $"{AppValues.Name}.Resources.Swagger.html";
+            //c.IndexStream = () => Assembly.GetExecutingAssembly().GetManifestResourceStream(embeddedHtml);
+            //c.IndexStream = () => GetSwaggerStream();
 
             //var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
             //foreach (var description in provider.ApiVersionDescriptions)
@@ -132,5 +133,13 @@ public static class BuilderSwagger
 
         });
     }
+
+    //public static Stream GetSwaggerStream()
+    //{
+    //    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Resources", "Swagger.html");
+    //    if (!File.Exists(filePath))
+    //        return new FileStream(filePath, FileMode.Open, FileAccess.Read);
+    //    return new MemoryStream(Encoding.UTF8.GetBytes("Swagger.html missing"));
+    //}
 
 }
