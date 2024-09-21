@@ -10,11 +10,11 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
-  <ItemGroup>
+  <!--<ItemGroup>
     <EmbeddedResource Include="Resources\Swagger.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-  </ItemGroup>
+  </ItemGroup>-->
 
   <ItemGroup>
     <!--<PackageReference Include="Asp.Versioning.Abstractions" Version="8.1.0" />
