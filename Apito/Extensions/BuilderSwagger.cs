@@ -4,6 +4,7 @@ using Apito.Models;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Reflection;
+using System.Text;
 
 // required nugets:
 //Microsoft.AspNetCore.OpenApi
@@ -122,7 +123,7 @@ public static class BuilderSwagger
             c.EnableTryItOutByDefault();
             //string embeddedHtml = $"{AppValues.Name}.Resources.Swagger.html";
             //c.IndexStream = () => Assembly.GetExecutingAssembly().GetManifestResourceStream(embeddedHtml);
-            //c.IndexStream = () => GetSwaggerStream();
+            c.IndexStream = () => GetSwaggerStream();
 
             //var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
             //foreach (var description in provider.ApiVersionDescriptions)
@@ -134,12 +135,12 @@ public static class BuilderSwagger
         });
     }
 
-    //public static Stream GetSwaggerStream()
-    //{
-    //    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Resources", "Swagger.html");
-    //    if (!File.Exists(filePath))
-    //        return new FileStream(filePath, FileMode.Open, FileAccess.Read);
-    //    return new MemoryStream(Encoding.UTF8.GetBytes("Swagger.html missing"));
-    //}
+    public static Stream GetSwaggerStream()
+    {
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Resources", "Swagger.html");
+        if (File.Exists(filePath))
+            return new FileStream(filePath, FileMode.Open, FileAccess.Read);
+        return new MemoryStream(Encoding.UTF8.GetBytes("Swagger.html missing"));
+    }
 
 }

@@ -5,16 +5,10 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>true</InvariantGlobalization>
-    <Version>1.0.16</Version>
+    <Version>1.0.17</Version>
     <UserSecretsId>10ae05a4-aa93-43e0-a2dc-daf59485678c</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
-
-  <!--<ItemGroup>
-    <EmbeddedResource Include="Resources\Swagger.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>-->
 
   <ItemGroup>
     <!--<PackageReference Include="Asp.Versioning.Abstractions" Version="8.1.0" />
