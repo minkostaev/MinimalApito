@@ -22,10 +22,15 @@ public static class BuilderServices
             });
         });
 
+        string? vaultKey = Environment.GetEnvironmentVariable("Vault");
+
         // Get db connection string from my vault
         var vault = new VaultConfiguration(configuration["Vault"]!);
         var connection = await vault.Get(configuration["DbMongo:kkkppp"]!);
         ///configuration["DbMongoConnection"] = connection;
+
+        if (!string.IsNullOrWhiteSpace(vaultKey))
+            connection = vaultKey;
 
         // Mongo
         if (connection is string)
