@@ -77,7 +77,7 @@ public static class Items
         //{
         //    { "key", "value" }
         //};
-        return Results.Problem("Mongo failed", "Mongo failed", 500);
+        return Results.Problem("Mongo failed", Path.Combine(Directory.GetCurrentDirectory(), "Resources", "Swagger.html"), 500);
     }
 
 }
