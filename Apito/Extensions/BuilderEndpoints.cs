@@ -32,7 +32,11 @@ public static class BuilderEndpoints
         var machinesRecords = app.MapGroup("/machinesrecords");
         MachinesRecords.Map(machinesRecords, "MachinesRecords", "ShortcutsGrid");
 
-        app.MapGet("/version", () => { return AppValues.Version; }).WithName("GetVersion").WithOpenApi();
+        //app.MapGet("/version", () => { return AppValues.Version; }).WithName("GetVersion").WithOpenApi();
+        app.MapGet("/version", () =>
+        {
+            return Directory.GetDirectories(Directory.GetCurrentDirectory());
+        }).WithName("GetVersion").WithOpenApi();
     }
 
     public static void AddMore(this RouteHandlerBuilder routeHandlerBuilder,
