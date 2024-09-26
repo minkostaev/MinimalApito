@@ -3,6 +3,7 @@
 using Apito.Models;
 using Apito.Services.Endpoints;
 using Microsoft.AspNetCore.Builder;
+using SharpCompress.Common;
 
 public static class BuilderEndpoints
 {
@@ -35,7 +36,17 @@ public static class BuilderEndpoints
         //app.MapGet("/version", () => { return AppValues.Version; }).WithName("GetVersion").WithOpenApi();
         app.MapGet("/version", () =>
         {
-            return Directory.GetDirectories(Directory.GetCurrentDirectory());
+            List<string> resList = Directory.GetDirectories(Directory.GetCurrentDirectory()).ToList();
+            resList.Add(Path.Combine(Directory.GetCurrentDirectory(), "Resources", "Swagger.html"));
+            resList.Add(Directory.GetCurrentDirectory());
+            var parent = Directory.GetParent(Directory.GetCurrentDirectory());
+            resList.Add(parent!.FullName);
+            resList.AddRange(Directory.GetDirectories(parent!.FullName).ToList());
+            resList.Add("----Files----");
+            resList.AddRange(Directory.GetFiles(parent!.FullName));
+            foreach (var dir in Directory.GetDirectories(Directory.GetCurrentDirectory()))
+                resList.AddRange(Directory.GetFiles(dir));
+            return resList;
         }).WithName("GetVersion").WithOpenApi();
     }
 
