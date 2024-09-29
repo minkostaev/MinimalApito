@@ -3,8 +3,6 @@
 using Apito.Models;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
-using System.Reflection;
-using System.Text;
 
 // required nugets:
 //Microsoft.AspNetCore.OpenApi

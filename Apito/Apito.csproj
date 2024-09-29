@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>true</InvariantGlobalization>
-    <Version>1.0.19</Version>
+    <Version>1.0.20</Version>
     <UserSecretsId>10ae05a4-aa93-43e0-a2dc-daf59485678c</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
@@ -19,12 +19,6 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.29.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.8.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Resources\Swagger.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

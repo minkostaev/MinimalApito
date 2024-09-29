@@ -1,9 +1,7 @@
 ﻿namespace Apito.Services.Endpoints;
 
 using Apito.Models;
-using System.Collections.Specialized;
 using System.Text.Json;
-using System.Web;
 
 public static class MachinesRecords
 {
