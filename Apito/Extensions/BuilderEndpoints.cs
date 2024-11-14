@@ -33,21 +33,21 @@ public static class BuilderEndpoints
         var machinesRecords = app.MapGroup("/machinesrecords");
         MachinesRecords.Map(machinesRecords, "MachinesRecords", "ShortcutsGrid");
 
-        //app.MapGet("/version", () => { return AppValues.Version; }).WithName("GetVersion").WithOpenApi();
-        app.MapGet("/version", () =>
+        app.MapGet("/version", () => { return AppValues.Version; }).WithName("GetVersion").WithOpenApi();
+        app.MapGet("/paths", () =>
         {
             List<string> resList = Directory.GetDirectories(Directory.GetCurrentDirectory()).ToList();
             resList.Add(Path.Combine(Directory.GetCurrentDirectory(), "Resources", "Swagger.html"));
             resList.Add(Directory.GetCurrentDirectory());
             var parent = Directory.GetParent(Directory.GetCurrentDirectory());
             resList.Add(parent!.FullName);
-            resList.AddRange(Directory.GetDirectories(parent!.FullName).ToList());
+            resList.AddRange([.. Directory.GetDirectories(parent!.FullName)]);
             resList.Add("----Files----");
             resList.AddRange(Directory.GetFiles(parent!.FullName));
             foreach (var dir in Directory.GetDirectories(Directory.GetCurrentDirectory()))
                 resList.AddRange(Directory.GetFiles(dir));
             return resList;
-        }).WithName("GetVersion").WithOpenApi();
+        }).WithName("GetPaths").WithOpenApi();
     }
 
     public static void AddMore(this RouteHandlerBuilder routeHandlerBuilder,

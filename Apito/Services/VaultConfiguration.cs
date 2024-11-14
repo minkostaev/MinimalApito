@@ -24,7 +24,9 @@ public class VaultConfiguration
 
         var clientHandler = new HttpClientHandler
         {
+            #pragma warning disable S4830 // Server certificates should be verified during SSL/TLS connections
             ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; }
+            #pragma warning restore S4830
         };
         using (var client = new HttpClient(clientHandler))
         {

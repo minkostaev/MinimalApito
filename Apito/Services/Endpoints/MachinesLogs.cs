@@ -98,7 +98,7 @@ public static class MachinesLogs
     //    return await GetOne(crud, context, id);
     //}
 
-    private static async Task<IResult> DeleteOne(MongoCrud crud, HttpContext context, string id)
+    private static async Task<IResult> DeleteOne(MongoCrud crud, string id)
     {
         var deleted = await crud.RemoveAsync(id, CollectionName!, DatabasesName!);
         if (!deleted)

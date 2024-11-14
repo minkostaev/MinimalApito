@@ -6,15 +6,15 @@ public static class BuilderApp
 {
     public static void AddAllUses(this WebApplication app)
     {
-        //app.Use(async (context, next) =>
-        //{
-        //    if (context.Request.Path == "/")
-        //    {
-        //        context.Response.Redirect("/index.html");
-        //        return;
-        //    }
-        //    await next();
-        //});
+        ///app.Use(async (context, next) =>
+        ///{
+        ///    if (context.Request.Path == "/")
+        ///    {
+        ///        context.Response.Redirect("/index.html");
+        ///        return;
+        ///    }
+        ///    await next();
+        ///});
         app.UseDefaultFiles();// This will look for index.html by default
         app.UseStaticFiles();// wwwroot
 
