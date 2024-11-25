@@ -33,6 +33,9 @@ public static class BuilderEndpoints
         var machinesRecords = app.MapGroup("/machinesrecords");
         MachinesRecords.Map(machinesRecords, "MachinesRecords", "ShortcutsGrid");
 
+        var emailResend = app.MapGroup("/emailresend");
+        MintzatEmail.Map(emailResend);
+
         app.MapGet("/version", () => { return AppValues.Version; }).WithName("GetVersion").WithOpenApi();
         app.MapGet("/paths", () =>
         {

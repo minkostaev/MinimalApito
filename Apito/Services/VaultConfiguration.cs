@@ -7,12 +7,14 @@ using System.Text.Json;
 public class VaultConfiguration
 {
     private readonly string _vaultUri;
+    private readonly string _vaultUri2;
     private readonly string _vaultId;
     private readonly string _vaultCrypt;
 
     public VaultConfiguration(string hostLink)
     {
         _vaultUri = hostLink + "/vault";
+        _vaultUri2 = hostLink + "/vaults";
         _vaultId = Environment.UserDomainName + " " + Environment.UserName;
         _vaultCrypt = _vaultId + " " + DateTime.UtcNow.Year;
     }
@@ -42,6 +44,49 @@ public class VaultConfiguration
                 var crypto = new CryptographyAlgorithm();
                 string result = crypto.DecryptCipherTextToPlainText(
                     resJson!.Property, _vaultCrypt, resJson.Id);
+
+                return result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+    }
+
+    public async Task<object?> Get(string[] property)
+    {
+        var list = new List<string> { _vaultId };
+        list.AddRange(property);
+        string jsonDto = JsonSerializer.Serialize(list);
+
+        var clientHandler = new HttpClientHandler
+        {
+#pragma warning disable S4830 // Server certificates should be verified during SSL/TLS connections
+            ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; }
+#pragma warning restore S4830
+        };
+        using (var client = new HttpClient(clientHandler))
+        {
+            try
+            {
+                var content = new StringContent(jsonDto, Encoding.UTF8, "application/json");
+                var response = await client.PostAsync(_vaultUri2, content);
+                if (!response.IsSuccessStatusCode)
+                    return null;
+
+                var resJson = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+                if (resJson == null)
+                    return null;
+
+                List<string> result = [];
+                foreach (var d in resJson)
+                {
+                    var crypto = new CryptographyAlgorithm();
+                    string key = crypto.DecryptCipherTextToPlainText(
+                        d.Value, _vaultCrypt, d.Key);
+                    result.Add(key);
+                }
 
                 return result;
             }

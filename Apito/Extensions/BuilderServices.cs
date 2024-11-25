@@ -2,6 +2,7 @@
 
 using Apito.Models;
 using Apito.Services;
+using Mintzat.Email.ResendCom;
 using MongoDB.Driver;
 
 public static class BuilderServices
@@ -43,6 +44,7 @@ public static class BuilderServices
             AppValues.MongoFailed = true;
         }
         services.AddSingleton<MongoCrud>();
+        services.AddSingleton<IResendSender>(new ResendSender(""));
 
     }
 
