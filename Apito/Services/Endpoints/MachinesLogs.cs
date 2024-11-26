@@ -28,7 +28,7 @@ public static class MachinesLogs
             "DeleteLog");
     }
 
-    private static async Task<IResult> GetAll(MongoCrud crud, HttpContext context)
+    private static async Task<IResult> GetAll(MongoCrud crud)
     {
         var jsonList = await crud.GetCollectionToJsonAsync(CollectionName!, DatabasesName!);
         if (jsonList == null)

@@ -44,12 +44,12 @@ public static class BuilderSwagger
                 {
                     Name = "NAME",
                     Email = "name@mail.com",
-                    Url = new Uri("https://github.com/minkostaev/MinimalApito")
+                    Url = new Uri($"https://github.com/minkostaev/MinimalApito")
                 },
                 License = new OpenApiLicense
                 {
                     Name = "Source",
-                    Url = new Uri("https://github.com/minkostaev/MinimalApito")
+                    Url = new Uri($"https://github.com/minkostaev/MinimalApito")
                 }
             });
 

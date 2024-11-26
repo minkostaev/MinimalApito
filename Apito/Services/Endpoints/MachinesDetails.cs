@@ -23,7 +23,7 @@ public static class MachinesDetails
         item.MapDelete("", Delete);
     }
 
-    private static async Task<IResult> GetAll(MongoCrud crud, HttpContext context)
+    private static async Task<IResult> GetAll(MongoCrud crud)
     {
         var jsonList = await crud.GetCollectionToJsonAsync(CollectionName!, DatabasesName!);
         if (jsonList == null)
@@ -31,7 +31,7 @@ public static class MachinesDetails
         return Results.Ok(jsonList);
     }
 
-    private static async Task<IResult> GetOne(MongoCrud crud, HttpContext context, string id)
+    private static async Task<IResult> GetOne(MongoCrud crud, string id)
     {
         var item = await crud.GetItemJsonAsync(id, CollectionName!, DatabasesName!);
         if (item == null)
@@ -39,7 +39,7 @@ public static class MachinesDetails
         return Results.Ok(item);
     }
 
-    private static async Task<IResult> GetByHash(MongoCrud crud, HttpContext context, string hash)
+    private static async Task<IResult> GetByHash(MongoCrud crud, string hash)
     {
         var items = await crud.GetItemsJsonAsync("Hash", hash, CollectionName!, DatabasesName!);
         if (items == null)

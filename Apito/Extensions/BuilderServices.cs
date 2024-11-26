@@ -23,20 +23,18 @@ public static class BuilderServices
             });
         });
 
-        string? vaultKey = Environment.GetEnvironmentVariable("Vault");
+        ///string? vaultKey = Environment.GetEnvironmentVariable("Vault");
 
-        // Get db connection string from my vault
+        // Get secrets from my vault
         var vault = new VaultConfiguration(configuration["Vault"]!);
-        var connection = await vault.Get(configuration["DbMongo:kkkppp"]!);
+        string[] secretKeys = [configuration["DbMongo:kkkppp"]!, configuration["Emails:resend"]!];
+        var connections = await vault.Get(secretKeys);
         ///configuration["DbMongoConnection"] = connection;
 
-        if (!string.IsNullOrWhiteSpace(vaultKey))
-            connection = vaultKey;
-
         // Mongo
-        if (connection is string)
+        if (connections != null && connections.Count > 0)
         {
-            services.AddSingleton<IMongoClient>(new MongoClient(connection.ToString()));
+            services.AddSingleton<IMongoClient>(new MongoClient(connections[0]));
         }
         else
         {
@@ -44,7 +42,10 @@ public static class BuilderServices
             AppValues.MongoFailed = true;
         }
         services.AddSingleton<MongoCrud>();
-        services.AddSingleton<IResendSender>(new ResendSender(""));
+        if (connections != null && connections.Count > 1)
+        {
+            services.AddSingleton<IResendSender>(new ResendSender(connections[1]));
+        }
 
     }
 

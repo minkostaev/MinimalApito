@@ -45,7 +45,7 @@ public static class Items
         return Results.Created($"/items/{id}", itemJson);
     }
 
-    private static IResult GetOne(MongoCrud crud, HttpContext context, string id)
+    private static IResult GetOne(MongoCrud crud, string id)
     {
         var item = crud.GetItemJson(id, CollectionName!, DatabasesName!);
         if (item == null)
@@ -59,10 +59,10 @@ public static class Items
         bool edited = crud.Edit(requestBody, id, CollectionName!, DatabasesName!);
         if (!edited)
             return Results.NotFound();
-        return GetOne(crud, context, id);
+        return GetOne(crud, id);
     }
 
-    private static IResult DeleteOne(MongoCrud crud, HttpContext context, string id)
+    private static IResult DeleteOne(MongoCrud crud, string id)
     {
         var deleted = crud.Remove(id, CollectionName!, DatabasesName!);
         if (!deleted)

@@ -54,7 +54,7 @@ public class VaultConfiguration
         }
     }
 
-    public async Task<object?> Get(string[] property)
+    public async Task<List<string>?> Get(string[] property)
     {
         var list = new List<string> { _vaultId };
         list.AddRange(property);
