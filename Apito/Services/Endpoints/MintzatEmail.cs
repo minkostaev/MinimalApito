@@ -14,18 +14,27 @@ public static class MintzatEmail
     private static async Task<IResult> PostOneAsync(HttpContext context, IResendSender sender)
     {
         string requestBody = await HttpContextHelper.GetContextBodyAsync(context);
-        var bodyType = new { to = "", from = "", name = "", topic = "", message = "", toUserToo = false };
+        var bodyType = new
+        {
+            to = "",
+            from = "",
+            name = "",
+            topic = "",
+            message = "",
+            secondTopic = "",
+            secondHeader = "",
+            secondFooter = ""
+        };
         var obj = JsonSerializer.Deserialize(requestBody, bodyType.GetType());
 
-        string to = string.Empty;
+        string to = string.Empty;// optional
         string from = string.Empty;
         string name = string.Empty;
         string topic = string.Empty;
         string message = string.Empty;
-        bool toUserToo = false;
-        ///string secondTopic = string.Empty;
-        ///string secondHeader = string.Empty;
-        ///string secondFooter = string.Empty;
+        string secondTopic = string.Empty;// optional
+        string secondHeader = string.Empty;// optional
+        string secondFooter = string.Empty;// optional
 
         if (obj != null)
         {
@@ -34,17 +43,16 @@ public static class MintzatEmail
             name = ((dynamic)obj).name;
             topic = ((dynamic)obj).topic;
             message = ((dynamic)obj).message;
-            toUserToo = ((dynamic)obj).toUserToo;
+            secondTopic = ((dynamic)obj).secondTopic;
+            secondHeader = ((dynamic)obj).secondHeader;
+            secondFooter = ((dynamic)obj).secondFooter;
         }
 
         bool isSent = await SendEmail(sender, [to], from, name, topic, message);
-        if (toUserToo)
+        if (!string.IsNullOrEmpty(secondTopic))
         {
-            await SendEmail(sender, [from], to, "",
-                "Summary and confirmation on message you sent",
-                "<h1>You have send this message to us</h1>" +
-                topic + "<br/>" + message +
-                "<h2>We'll get back to you as soon as possible</h2>");
+            await SendEmail(sender, [from], to, "", secondTopic,
+                secondHeader + topic + "<br/>" + message + secondFooter);
         }
 
         if (!isSent)
