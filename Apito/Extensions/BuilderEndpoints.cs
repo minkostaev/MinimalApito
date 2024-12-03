@@ -37,6 +37,7 @@ public static class BuilderEndpoints
         MintzatEmail.Map(emailResend);
 
         app.MapGet("/version", () => { return AppValues.Version; }).WithName("GetVersion").WithOpenApi();
+        app.MapGet("/cors", () => { return AppValues.Cors; }).WithName("GetCors").WithOpenApi();
         app.MapGet("/paths", () =>
         {
             List<string> resList = Directory.GetDirectories(Directory.GetCurrentDirectory()).ToList();

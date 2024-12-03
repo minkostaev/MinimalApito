@@ -10,4 +10,6 @@ public static class AppValues
 
     public static bool MongoFailed { get; set; }
 
+    public static string[]? Cors { get; set; }
+
 }

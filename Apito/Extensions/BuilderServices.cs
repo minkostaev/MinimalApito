@@ -11,16 +11,11 @@ public static class BuilderServices
     {
         services.AddSwaggerServices();
 
-        // CORS
+        AppValues.Cors = configuration.GetSection("CORS:Allow-Origins").Get<string[]>()!;
         services.AddCors(options =>
         {
             options.AddPolicy(name: configuration["CORS:Policy-Name"]!,
-            config =>
-            {
-                config.WithOrigins(configuration.GetSection("CORS:Allow-Origins").Get<string[]>()!)
-                .AllowAnyMethod()
-                .AllowAnyHeader();
-            });
+            cnfg => { cnfg.WithOrigins(AppValues.Cors).AllowAnyMethod().AllowAnyHeader(); });
         });
 
         ///string? vaultKey = Environment.GetEnvironmentVariable("Vault");
@@ -29,9 +24,7 @@ public static class BuilderServices
         var vault = new VaultConfiguration(configuration["Vault"]!);
         string[] secretKeys = [configuration["DbMongo:kkkppp"]!, configuration["Emails:resend"]!];
         var connections = await vault.Get(secretKeys);
-        ///configuration["DbMongoConnection"] = connection;
 
-        // Mongo
         if (connections != null && connections.Count > 0)
         {
             services.AddSingleton<IMongoClient>(new MongoClient(connections[0]));
