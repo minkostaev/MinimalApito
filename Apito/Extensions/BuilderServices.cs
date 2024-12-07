@@ -16,6 +16,7 @@ public static class BuilderServices
         {
             options.AddPolicy(name: configuration["CORS:Policy-Name"]!,
             cnfg => { cnfg.WithOrigins(AppValues.Cors).AllowAnyMethod().AllowAnyHeader(); });
+            ///cnfg => { cnfg.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); });
         });
 
         ///string? vaultKey = Environment.GetEnvironmentVariable("Vault");
