@@ -38,7 +38,7 @@ public static class BuilderEndpoints
 
         app.MapGet("/version", () => { return AppValues.Version; }).WithName("GetVersion").WithOpenApi();
         app.MapGet("/cors", () => { return AppValues.Cors; }).WithName("GetCors").WithOpenApi();
-        app.MapGet("/mongofailed", () => { return AppValues.MongoFailed; }).WithName("GetMongofailed").WithOpenApi();
+        app.MapGet("/secreterror", () => { return AppValues.SecretError; }).WithName("GetSecretError").WithOpenApi();
         app.MapGet("/paths", () =>
         {
             List<string> resList = Directory.GetDirectories(Directory.GetCurrentDirectory()).ToList();

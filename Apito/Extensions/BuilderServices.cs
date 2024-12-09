@@ -34,7 +34,7 @@ public static class BuilderServices
                 AppValues.ResendConnection = connections[1];
         }
 
-        if (connections != null && !string.IsNullOrWhiteSpace(AppValues.MongoConnection))
+        if (!string.IsNullOrWhiteSpace(AppValues.MongoConnection))
         {
             services.AddSingleton<IMongoClient>(new MongoClient(AppValues.MongoConnection));
         }
@@ -44,7 +44,7 @@ public static class BuilderServices
             AppValues.MongoFailed = true;
         }
         services.AddSingleton<MongoCrud>();
-        if (connections != null && !string.IsNullOrWhiteSpace(AppValues.ResendConnection))
+        if (!string.IsNullOrWhiteSpace(AppValues.ResendConnection))
         {
             services.AddSingleton<IResendSender>(new ResendSender(AppValues.ResendConnection));
         }

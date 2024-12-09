@@ -90,8 +90,9 @@ public class VaultConfiguration
 
                 return result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                AppValues.SecretError = ex.Message;
                 return null;
             }
         }
