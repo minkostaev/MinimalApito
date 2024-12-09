@@ -26,9 +26,17 @@ public static class BuilderServices
         string[] secretKeys = [configuration["DbMongo:kkkppp"]!, configuration["Emails:resend"]!];
         var connections = await vault.Get(secretKeys);
 
-        if (connections != null && connections.Count > 0)
+        if (connections != null)
         {
-            services.AddSingleton<IMongoClient>(new MongoClient(connections[0]));
+            if (connections.Count > 0)
+                AppValues.MongoConnection = connections[0];
+            if (connections.Count > 1)
+                AppValues.ResendConnection = connections[1];
+        }
+
+        if (connections != null && !string.IsNullOrWhiteSpace(AppValues.MongoConnection))
+        {
+            services.AddSingleton<IMongoClient>(new MongoClient(AppValues.MongoConnection));
         }
         else
         {
@@ -36,9 +44,9 @@ public static class BuilderServices
             AppValues.MongoFailed = true;
         }
         services.AddSingleton<MongoCrud>();
-        if (connections != null && connections.Count > 1)
+        if (connections != null && !string.IsNullOrWhiteSpace(AppValues.ResendConnection))
         {
-            services.AddSingleton<IResendSender>(new ResendSender(connections[1]));
+            services.AddSingleton<IResendSender>(new ResendSender(AppValues.ResendConnection));
         }
 
     }
