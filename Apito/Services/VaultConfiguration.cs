@@ -78,7 +78,7 @@ public class VaultConfiguration
                 var resJson = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
                 if (resJson == null)
                     return null;
-
+                
                 List<string> result = [];
                 foreach (var d in resJson)
                 {
@@ -87,12 +87,12 @@ public class VaultConfiguration
                         d.Value, _vaultCrypt, d.Key);
                     result.Add(key);
                 }
-
                 return result;
             }
             catch (Exception ex)
             {
-                AppValues.SecretError = ex.Message;
+                string err = string.IsNullOrEmpty(ex.StackTrace) ? ex.Message : ex.Message + ex.StackTrace;
+                AppValues.SecretError = err;
                 return null;
             }
         }
