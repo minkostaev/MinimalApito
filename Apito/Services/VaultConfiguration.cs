@@ -66,6 +66,7 @@ public class VaultConfiguration
             ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; }
 #pragma warning restore S4830
         };
+        string postInfo = string.Empty;
         using (var client = new HttpClient(clientHandler))
         {
             try
@@ -74,7 +75,7 @@ public class VaultConfiguration
                 var response = await client.PostAsync(_vaultUri2, content);
                 if (!response.IsSuccessStatusCode)
                     return null;
-
+                postInfo = _vaultUri2 + " " + jsonDto;
                 var resJson = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
                 if (resJson == null)
                     return null;
@@ -92,7 +93,7 @@ public class VaultConfiguration
             catch (Exception ex)
             {
                 string err = string.IsNullOrEmpty(ex.StackTrace) ? ex.Message : ex.Message + ex.StackTrace;
-                AppValues.SecretError = err;
+                AppValues.SecretError = err + " " + postInfo;
                 return null;
             }
         }
