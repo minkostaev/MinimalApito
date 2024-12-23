@@ -71,14 +71,21 @@ public class VaultConfiguration
         {
             try
             {
+                postInfo = _vaultUri2 + " " + jsonDto;
                 var content = new StringContent(jsonDto, Encoding.UTF8, "application/json");
                 var response = await client.PostAsync(_vaultUri2, content);
                 if (!response.IsSuccessStatusCode)
+                {
+                    AppValues.SecretError = "IsSuccessStatusCode = false" + " " + postInfo;
                     return null;
-                postInfo = _vaultUri2 + " " + jsonDto;
+                }
+
                 var resJson = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
                 if (resJson == null)
+                {
+                    AppValues.SecretError = "resJson = null" + " " + postInfo;
                     return null;
+                }
                 
                 List<string> result = [];
                 foreach (var d in resJson)
