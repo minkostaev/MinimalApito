@@ -15,7 +15,13 @@ public class VaultConfiguration
     {
         _vaultUri = hostLink + "/vault";
         _vaultUri2 = hostLink + "/vaults";
-        _vaultId = Environment.UserDomainName + " " + Environment.UserName;
+
+        var dashNames = Environment.UserDomainName.Split('-');
+        string domName = dashNames[0];
+        if (dashNames.Length > 1)
+            domName = domName + "-" + dashNames[1];
+
+        _vaultId = domName + " " + Environment.UserName;
         _vaultCrypt = _vaultId + " " + DateTime.UtcNow.Year;
     }
 
