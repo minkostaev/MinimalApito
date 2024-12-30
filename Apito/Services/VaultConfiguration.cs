@@ -77,7 +77,7 @@ public class VaultConfiguration
         {
             try
             {
-                postInfo = _vaultUri2 == null ? "N/A" + " " + jsonDto : _vaultUri2 + " " + jsonDto;
+                postInfo = string.IsNullOrEmpty(_vaultUri2) ? "N/A" + " " + jsonDto : _vaultUri2 + " " + jsonDto;
                 var content = new StringContent(jsonDto, Encoding.UTF8, "application/json");
                 var response = await client.PostAsync(_vaultUri2, content);
                 if (!response.IsSuccessStatusCode)
