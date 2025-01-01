@@ -22,6 +22,7 @@ public static class BuilderServices
         ///string? vaultKey = Environment.GetEnvironmentVariable("Vault");
 
         // Get secrets from my vault
+        CustomLogger.Add("BuilderServices", "25", configuration["Vault"]!);
         var vault = new VaultConfiguration(configuration["Vault"]!);
         string[] secretKeys = [configuration["DbMongo:kkkppp"]!, configuration["Emails:resend"]!];
         var connections = await vault.Get(secretKeys);

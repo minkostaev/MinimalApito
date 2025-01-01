@@ -36,6 +36,7 @@ public static class BuilderEndpoints
         var emailResend = app.MapGroup("/emailresend");
         MintzatEmail.Map(emailResend);
 
+        app.MapGet("/logger", () => { return CustomLogger.Get(); }).WithName("GetLogger").WithOpenApi();
         app.MapGet("/version", () => { return AppValues.Version; }).WithName("GetVersion").WithOpenApi();
         app.MapGet("/cors", () => { return AppValues.Cors; }).WithName("GetCors").WithOpenApi();
         app.MapGet("/secreterror", () => { return AppValues.SecretError; }).WithName("GetSecretError").WithOpenApi();

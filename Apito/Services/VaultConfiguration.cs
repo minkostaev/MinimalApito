@@ -15,6 +15,7 @@ public class VaultConfiguration
     {
         _vaultUri = hostLink + "/vault";
         _vaultUri2 = hostLink + "/vaults";
+        CustomLogger.Add("VaultConfiguration", "18", _vaultUri2);
 
         var dashNames = Environment.UserDomainName.Split('-');
         string domName = dashNames[0];
@@ -77,6 +78,7 @@ public class VaultConfiguration
         {
             try
             {
+                CustomLogger.Add("VaultConfiguration", "81", _vaultUri2 + "._<>_." + jsonDto);
                 postInfo = string.IsNullOrEmpty(_vaultUri2) ? "N/A" + " " + jsonDto : _vaultUri2 + " " + jsonDto;
                 var content = new StringContent(jsonDto, Encoding.UTF8, "application/json");
                 var response = await client.PostAsync(_vaultUri2, content);
@@ -86,13 +88,15 @@ public class VaultConfiguration
                     return null;
                 }
 
+                CustomLogger.Add("VaultConfiguration", "91", "_vaultUri2");
                 var resJson = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
                 if (resJson == null)
                 {
                     AppValues.SecretError = "resJson = null" + " " + postInfo;
                     return null;
                 }
-                
+
+                CustomLogger.Add("VaultConfiguration", "99", "_vaultUri2");
                 List<string> result = [];
                 foreach (var d in resJson)
                 {
@@ -105,6 +109,7 @@ public class VaultConfiguration
             }
             catch (Exception ex)
             {
+                CustomLogger.Add("VaultConfiguration", "112", string.IsNullOrEmpty(ex.StackTrace) ? ex.Message : ex.Message + ex.StackTrace);
                 string err = string.IsNullOrEmpty(ex.StackTrace) ? ex.Message : ex.Message + ex.StackTrace;
                 AppValues.SecretError = err + " " + postInfo;
                 return null;
