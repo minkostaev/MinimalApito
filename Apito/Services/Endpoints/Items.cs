@@ -9,12 +9,6 @@ public static class Items
 
     public static void Map(RouteGroupBuilder app, string collectionName, string databasesName)
     {
-        if (AppValues.MongoFailed)
-        {
-            app.MapGet("", ResultError);
-            return;
-        }
-
         CollectionName = collectionName;
         DatabasesName = databasesName;
 

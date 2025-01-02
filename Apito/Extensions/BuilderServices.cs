@@ -22,7 +22,6 @@ public static class BuilderServices
         ///string? vaultKey = Environment.GetEnvironmentVariable("Vault");
 
         // Get secrets from my vault
-        CustomLogger.Add("BuilderServices", "25", configuration["Vault"]!);
         var vault = new VaultConfiguration(configuration["Vault"]!);
         string[] secretKeys = [configuration["DbMongo:kkkppp"]!, configuration["Emails:resend"]!];
         var connections = await vault.Get(secretKeys);
@@ -34,6 +33,10 @@ public static class BuilderServices
             if (connections.Count > 1)
                 AppValues.ResendConnection = connections[1];
         }
+        else
+        {
+            CustomLogger.Add("BuilderServices", CustomLogger.GetLine(), "connections failed");
+        }
 
         if (!string.IsNullOrWhiteSpace(AppValues.MongoConnection))
         {
@@ -42,12 +45,16 @@ public static class BuilderServices
         else
         {
             services.AddSingleton<IMongoClient>(new MongoClient());
-            AppValues.MongoFailed = true;
+            CustomLogger.Add("BuilderServices", CustomLogger.GetLine(), "Mongo Connection empty");
         }
         services.AddSingleton<MongoCrud>();
         if (!string.IsNullOrWhiteSpace(AppValues.ResendConnection))
         {
             services.AddSingleton<IResendSender>(new ResendSender(AppValues.ResendConnection));
+        }
+        else
+        {
+            CustomLogger.Add("BuilderServices", CustomLogger.GetLine(), "Resend Connection empty");
         }
 
     }
