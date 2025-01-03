@@ -52,11 +52,12 @@ public static class MachinesLogs
         string valueHeader = context.Request.Headers["Desktop-Value"]!;
         string versionHeader = context.Request.Headers["Desktop-Version"]!;
 
+        string? ver = AppValues.Version;
         var log = new
         {
             Hash = machineHeader,
             Value = valueHeader,
-            Api = $"Apito|{AppValues.Version}",
+            Api = $"Apito|{ver}",
             Desktop = versionHeader,
             Date = DateTime.Now
         };
@@ -65,7 +66,7 @@ public static class MachinesLogs
         {
             Hash = machineHeader,
             Value = valueHeader,
-            Server = $"Apito|{AppValues.Version}",
+            Server = $"Apito|{ver}",
             Client = versionHeader,
             Date = DateTime.Now
         };

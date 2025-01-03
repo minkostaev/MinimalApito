@@ -37,22 +37,8 @@ public static class BuilderEndpoints
         MintzatEmail.Map(emailResend);
 
         app.MapGet("/logger", () => { return CustomLogger.Get(); }).WithName("GetLogger").WithOpenApi();
-        app.MapGet("/version", () => { return AppValues.Version; }).WithName("GetVersion").WithOpenApi();
         app.MapGet("/cors", () => { return AppValues.Cors; }).WithName("GetCors").WithOpenApi();
-        app.MapGet("/paths", () =>
-        {
-            List<string> resList = Directory.GetDirectories(Directory.GetCurrentDirectory()).ToList();
-            resList.Add(Path.Combine(Directory.GetCurrentDirectory(), "Resources", "Swagger.html"));
-            resList.Add(Directory.GetCurrentDirectory());
-            var parent = Directory.GetParent(Directory.GetCurrentDirectory());
-            resList.Add(parent!.FullName);
-            resList.AddRange([.. Directory.GetDirectories(parent!.FullName)]);
-            resList.Add("----Files----");
-            resList.AddRange(Directory.GetFiles(parent!.FullName));
-            foreach (var dir in Directory.GetDirectories(Directory.GetCurrentDirectory()))
-                resList.AddRange(Directory.GetFiles(dir));
-            return resList;
-        }).WithName("GetPaths").WithOpenApi();
+        app.MapGet("/paths", () => { return AppValues.DeployedPaths; }).WithName("GetPaths").WithOpenApi();
     }
 
     public static void AddMore(this RouteHandlerBuilder routeHandlerBuilder,
@@ -64,9 +50,4 @@ public static class BuilderEndpoints
             .WithDescription(description);
     }
 
-}
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }

@@ -9,6 +9,7 @@ public static class BuilderServices
 {
     public static async Task AddAll(this IServiceCollection services, ConfigurationManager configuration)
     {
+        CustomLogger.Add("BuilderServices", CustomLogger.GetLine(), $"version: {AppValues.Version}");
         services.AddSwaggerServices();
 
         AppValues.Cors = configuration.GetSection("CORS:Allow-Origins").Get<string[]>()!;
@@ -18,8 +19,6 @@ public static class BuilderServices
             cnfg => { cnfg.WithOrigins(AppValues.Cors).AllowAnyMethod().AllowAnyHeader(); });
             ///cnfg => { cnfg.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); });
         });
-
-        ///string? vaultKey = Environment.GetEnvironmentVariable("Vault");
 
         // Get secrets from my vault
         var vault = new VaultConfiguration(configuration["Vault"]!);
@@ -32,6 +31,7 @@ public static class BuilderServices
                 AppValues.MongoConnection = connections[0];
             if (connections.Count > 1)
                 AppValues.ResendConnection = connections[1];
+            CustomLogger.Add("BuilderServices", CustomLogger.GetLine(), $"connections count: {connections.Count}");
         }
         else
         {

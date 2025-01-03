@@ -1,6 +1,6 @@
 @Apito_HostAddress = http://localhost:5112
 
-GET {{Apito_HostAddress}}/weatherforecast/
+GET {{Apito_HostAddress}}/logger/
 Accept: application/json
 
 ###

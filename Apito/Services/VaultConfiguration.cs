@@ -80,7 +80,7 @@ public class VaultConfiguration
                 var response = await client.PostAsync(_vaultUri2, content);
                 if (!response.IsSuccessStatusCode)
                 {
-                    CustomLogger.Add(this, CustomLogger.GetLine(), "IsSuccessStatusCode = false " + jsonDto);
+                    CustomLogger.Add(this, CustomLogger.GetLine(), $"IsSuccessStatusCode = false {jsonDto}");
                     return null;
                 }
 
