@@ -3,7 +3,6 @@
 using Apito.Models;
 using Apito.Services.Endpoints;
 using Microsoft.AspNetCore.Builder;
-using SharpCompress.Common;
 
 public static class BuilderEndpoints
 {

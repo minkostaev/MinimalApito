@@ -40,6 +40,7 @@ public static class MachinesRecords
         string machineHeader = context.Request.Headers["Desktop-Machine"]!;
         string valueHeader = context.Request.Headers["Desktop-Value"]!;
         string versionHeader = context.Request.Headers["Desktop-Version"]!;
+        string timeHeader = context.Request.Headers["Desktop-Time"]!;
 
         var record = new
         {
@@ -47,7 +48,8 @@ public static class MachinesRecords
             Value = valueHeader,
             Client = versionHeader,
             Server = $"Apito|{AppValues.Version}",
-            Date = DateTime.Now
+            Date = DateTime.Now,
+            Time = timeHeader
         };
 
         string recordJson = JsonSerializer.Serialize(record);

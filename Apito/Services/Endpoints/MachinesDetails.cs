@@ -50,8 +50,8 @@ public static class MachinesDetails
     private static async Task<IResult> PostOne(MongoCrud crud, HttpContext context)
     {
         string machineHeader = context.Request.Headers["Desktop-Machine"]!;
-        if (machineHeader == null)
-            return Results.NotFound();
+        ///if (machineHeader == null)
+        ///    return Results.NotFound();
 
         await MachinesRecords.PostOne(crud, context);
 
