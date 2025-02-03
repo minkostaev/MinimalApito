@@ -29,8 +29,7 @@ public static class BuilderEndpoints
         var machinesLogs = app.MapGroup("/machineslogs");
         MachinesLogs.Map(machinesLogs, "MachinesLogs", "ShortcutsGrid");
         
-        var machinesRecords = app.MapGroup("/machinesrecords");
-        MachinesRecords.Map(machinesRecords, "MachinesRecords", "ShortcutsGrid");
+        MachinesRecords.Map(app.MapGroup("/machinesrecords"));
 
         var emailResend = app.MapGroup("/emailresend");
         MintzatEmail.Map(emailResend);

@@ -27,7 +27,6 @@ public static class Imoti
             return Results.NotFound();
         return Results.Ok(jsonList);
     }
-
     private static async Task<IResult> PostOne(MongoCrud crud, HttpContext context)
     {
         string requestBody = await HttpContextHelper.GetContextBodyAsync(context);
@@ -44,7 +43,6 @@ public static class Imoti
             return Results.NotFound();
         return Results.Ok(item);
     }
-
     private static async Task<IResult> PutOne(MongoCrud crud, HttpContext context, string id)
     {
         string requestBody = await HttpContextHelper.GetContextBodyAsync(context);
@@ -53,7 +51,6 @@ public static class Imoti
             return Results.NotFound();
         return await GetOne(crud, id);
     }
-
     private static async Task<IResult> DeleteOne(MongoCrud crud, string id)
     {
         var deleted = await crud.RemoveAsync(id, CollectionName!, DatabasesName!);

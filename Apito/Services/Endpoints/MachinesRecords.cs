@@ -5,13 +5,12 @@ using System.Text.Json;
 
 public static class MachinesRecords
 {
-    private static string? CollectionName { get; set; }
-    private static string? DatabasesName { get; set; }
+    private static string CollectionName => "MachinesRecords";
+    private static string DatabasesName => "ShortcutsGrid";
 
-    public static void Map(RouteGroupBuilder app, string collectionName, string databasesName)
+    public static void Map(RouteGroupBuilder app)
     {
-        CollectionName = collectionName;
-        DatabasesName = databasesName;
+        ///var aaa = app.MapGroup("/machinesrecords");
 
         app.MapGet("", GetAll);
         app.MapPost("", PostOne);
@@ -19,7 +18,8 @@ public static class MachinesRecords
 
         var item = app.MapGroup("/{id}");//id:guid
 
-        item.MapGet("", GetWithParams);
+        item.MapGet("", GetOne);
+        item.MapDelete("", DeleteOne);
         ///item.MapPut("", PutOne);
         ///item.MapDelete("", DeleteOne).AddMore(
         ///    "DeleteLog",
@@ -30,11 +30,8 @@ public static class MachinesRecords
     private static async Task<IResult> GetAll(MongoCrud crud)
     {
         var jsonList = await crud.GetCollectionToJsonAsync(CollectionName!, DatabasesName!);
-        if (jsonList == null)
-            return Results.NotFound();
-        return Results.Ok(jsonList);
+        return ResponseResults.Get(jsonList);
     }
-
     public static async Task<IResult> PostOne(MongoCrud crud, HttpContext context)
     {
         string machineHeader = context.Request.Headers["Desktop-Machine"]!;
@@ -54,25 +51,19 @@ public static class MachinesRecords
 
         string recordJson = JsonSerializer.Serialize(record);
         var (id, itemJason) = await crud.AddAsync(recordJson, CollectionName!, DatabasesName!);
-        if (string.IsNullOrEmpty(id))
-            return Results.NotFound();
-        return Results.Created($"/machinesrecords/{id}", itemJason);
+        return ResponseResults.Post(id, $"/machinesrecords/{id}", itemJason);
     }
-
     private static async Task<IResult> DeleteMany(MongoCrud crud, HttpContext context)
     {
         string requestBody = await HttpContextHelper.GetContextBodyAsync(context);
         var result = MongoAssistant.GetIdsFromJson(requestBody);
         var deleted = await crud.RemoveAsync(result, CollectionName!, DatabasesName!);
-        if (!deleted)
-            return Results.NotFound();
-        return Results.NoContent();
+        return ResponseResults.Delete(deleted);
     }
 
-
-    private static async Task<IResult> GetWithParams(MongoCrud crud, string id)
+    private static async Task<IResult> GetOne(MongoCrud crud, string id)
     {
-        //?page=2&size=10&sort=price,asc&filter=category:electronics
+        ///?page=2&size=10&sort=price,asc&filter=category:electronics
 
         ///NameValueCollection queryParams = HttpUtility.ParseQueryString(id);
         ///int page = int.Parse(queryParams["page"]);
@@ -80,11 +71,13 @@ public static class MachinesRecords
         ///string sort = queryParams["sort"];
         ///string filter = queryParams["filter"];
 
-        var item = await crud.GetItemJsonAsync(id, CollectionName!, DatabasesName!);
-        if (item == null)
-            return Results.NotFound();
-        return Results.Ok(id);
+        var item = await crud.GetItemJsonAsync(id, CollectionName, DatabasesName);
+        return ResponseResults.Get(item);
     }
-
+    private static async Task<IResult> DeleteOne(MongoCrud crud, string id)
+    {
+        var deleted = await crud.RemoveAsync(id, CollectionName, DatabasesName);
+        return ResponseResults.Delete(deleted);
+    }
 
 }
