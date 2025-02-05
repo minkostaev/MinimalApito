@@ -6,37 +6,37 @@ using Microsoft.AspNetCore.Builder;
 
 public static class BuilderEndpoints
 {
-    public static void RegisterAllEndpoints(this IEndpointRouteBuilder app)
+    public static void RegisterAllEndpoints(this IEndpointRouteBuilder root)
     {
-        var items = app.MapGroup("/items");
+        var items = root.MapGroup("/items");
         Items.Map(items, "Users", "ShortcutsGrid");
 
-        var itemsAsync = app.MapGroup("/itemsasync");
+        var itemsAsync = root.MapGroup("/itemsasync");
         ItemsAsync.Map(itemsAsync, "Users", "ShortcutsGrid");
 
-        ///ApiVersionSet apiVersionSet = app.NewApiVersionSet()
+        ///ApiVersionSet apiVersionSet = root.NewApiVersionSet()
         ///    .HasApiVersion(new Asp.Versioning.ApiVersion(1))
         ///    .HasApiVersion(new Asp.Versioning.ApiVersion(2))
         ///    .ReportApiVersions()
         ///    .Build();
 
-        var imoti = app.MapGroup("/imoti");
+        var imoti = root.MapGroup("/imoti");
         Imoti.Map(imoti, "Imoti", "ShortcutsGrid");
 
-        var machinesDetails = app.MapGroup("/machinesdetails");///.WithApiVersionSet(apiVersionSet);
-        MachinesDetails.Map(machinesDetails, "MachinesDetails", "ShortcutsGrid");
+        ///var machinesDetails = root.MapGroup("/machinesdetails");///.WithApiVersionSet(apiVersionSet);
+        MachinesDetails.Map(root);
 
-        var machinesLogs = app.MapGroup("/machineslogs");
+        var machinesLogs = root.MapGroup("/machineslogs");
         MachinesLogs.Map(machinesLogs, "MachinesLogs", "ShortcutsGrid");
         
-        MachinesRecords.Map(app.MapGroup("/machinesrecords"));
+        MachinesRecords.Map(root);
 
-        var emailResend = app.MapGroup("/emailresend");
+        var emailResend = root.MapGroup("/emailresend");
         MintzatEmail.Map(emailResend);
 
-        app.MapGet("/logger", () => { return CustomLogger.Get(); }).WithName("GetLogger").WithOpenApi();
-        app.MapGet("/cors", () => { return AppValues.Cors; }).WithName("GetCors").WithOpenApi();
-        app.MapGet("/paths", () => { return AppValues.DeployedPaths; }).WithName("GetPaths").WithOpenApi();
+        root.MapGet("/logger", () => { return CustomLogger.Get(); }).WithName("GetLogger").WithOpenApi();
+        root.MapGet("/cors", () => { return AppValues.Cors; }).WithName("GetCors").WithOpenApi();
+        root.MapGet("/paths", () => { return AppValues.DeployedPaths; }).WithName("GetPaths").WithOpenApi();
     }
 
     public static void AddMore(this RouteHandlerBuilder routeHandlerBuilder,

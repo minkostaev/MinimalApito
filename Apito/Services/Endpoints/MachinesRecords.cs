@@ -7,10 +7,11 @@ public static class MachinesRecords
 {
     private static string CollectionName => "MachinesRecords";
     private static string DatabasesName => "ShortcutsGrid";
+    private static string RootEndpoint => "/machinesrecords";
 
-    public static void Map(RouteGroupBuilder app)
+    public static void Map(IEndpointRouteBuilder root)
     {
-        ///var aaa = app.MapGroup("/machinesrecords");
+        var app = root.MapGroup(RootEndpoint);
 
         app.MapGet("", GetAll);
         app.MapPost("", PostOne);
@@ -20,7 +21,7 @@ public static class MachinesRecords
 
         item.MapGet("", GetOne);
         item.MapDelete("", DeleteOne);
-        ///item.MapPut("", PutOne);
+        item.MapPut("", PutOne);
         ///item.MapDelete("", DeleteOne).AddMore(
         ///    "DeleteLog",
         ///    "DeleteLog",
@@ -78,6 +79,15 @@ public static class MachinesRecords
     {
         var deleted = await crud.RemoveAsync(id, CollectionName, DatabasesName);
         return ResponseResults.Delete(deleted);
+    }
+
+    private static async Task<IResult> PutOne(MongoCrud crud, HttpContext context, string id)
+    {
+        string requestBody = await HttpContextHelper.GetContextBodyAsync(context);
+        bool edited = await crud.EditAsync(requestBody, id, CollectionName, DatabasesName);
+        if (!edited)
+            return Results.NotFound();
+        return await GetOne(crud, id);
     }
 
 }

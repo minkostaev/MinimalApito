@@ -2,6 +2,8 @@
 
 using Apito.Models;
 using Apito.Services;
+//using Microsoft.AspNetCore.Authentication.JwtBearer;
+//using Microsoft.IdentityModel.Tokens;
 using Mintzat.Email.ResendCom;
 using MongoDB.Driver;
 
@@ -10,6 +12,24 @@ public static class BuilderServices
     public static async Task AddAll(this IServiceCollection services, ConfigurationManager configuration)
     {
         CustomLogger.Add("BuilderServices", CustomLogger.GetLine(), $"version: {AppValues.Version}");
+
+        //Authentication Authorization
+        //Microsoft.AspNetCore.Authentication.JwtBearer
+        //Microsoft.IdentityModel.Tokens
+        //appsettings.json
+
+        //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        //    .AddJwtBearer(options =>
+        //    {
+        //        options.Authority = configuration["Auth0:Domain"];
+        //        options.Audience = configuration["Auth0:Audience"];
+        //        options.TokenValidationParameters = new TokenValidationParameters
+        //        {
+        //            ValidateIssuer = true
+        //        };
+        //    });
+        //services.AddAuthorization();
+
         services.AddSwaggerServices();
 
         AppValues.Cors = configuration.GetSection("CORS:Allow-Origins").Get<string[]>()!;

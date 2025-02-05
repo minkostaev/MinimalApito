@@ -4,13 +4,13 @@ using System.Text.Json;
 
 public static class MachinesDetails
 {
-    private static string? CollectionName { get; set; }
-    private static string? DatabasesName { get; set; }
+    private static string CollectionName => "MachinesDetails";
+    private static string DatabasesName => "ShortcutsGrid";
+    private static string RootEndpoint => "/machinesdetails";
 
-    public static void Map(RouteGroupBuilder app, string collectionName, string databasesName)
+    public static void Map(IEndpointRouteBuilder root)
     {
-        CollectionName = collectionName;
-        DatabasesName = databasesName;
+        var app = root.MapGroup(RootEndpoint);
 
         app.MapGet("", GetAll);
         app.MapPost("", PostOne);
@@ -25,7 +25,7 @@ public static class MachinesDetails
 
     private static async Task<IResult> GetAll(MongoCrud crud)
     {
-        var jsonList = await crud.GetCollectionToJsonAsync(CollectionName!, DatabasesName!);
+        var jsonList = await crud.GetCollectionToJsonAsync(CollectionName, DatabasesName);
         if (jsonList == null)
             return Results.NotFound();
         return Results.Ok(jsonList);
@@ -33,7 +33,7 @@ public static class MachinesDetails
 
     private static async Task<IResult> GetOne(MongoCrud crud, string id)
     {
-        var item = await crud.GetItemJsonAsync(id, CollectionName!, DatabasesName!);
+        var item = await crud.GetItemJsonAsync(id, CollectionName, DatabasesName);
         if (item == null)
             return Results.NotFound();
         return Results.Ok(item);
@@ -41,7 +41,7 @@ public static class MachinesDetails
 
     private static async Task<IResult> GetByHash(MongoCrud crud, string hash)
     {
-        var items = await crud.GetItemsJsonAsync("Hash", hash, CollectionName!, DatabasesName!);
+        var items = await crud.GetItemsJsonAsync("Hash", hash, CollectionName, DatabasesName);
         if (items == null)
             return Results.NotFound();
         return Results.Ok(items);
@@ -55,12 +55,12 @@ public static class MachinesDetails
 
         await MachinesRecords.PostOne(crud, context);
 
-        var machineExist = await crud.GetItemJsonAsync("Hash", machineHeader, CollectionName!, DatabasesName!);
+        var machineExist = await crud.GetItemJsonAsync("Hash", machineHeader, CollectionName, DatabasesName);
         if (machineExist != null)
             return Results.NotFound();
 
         string requestBody = await HttpContextHelper.GetContextBodyAsync(context);
-        var (id, itemJason) = await crud.AddAsync(requestBody, CollectionName!, DatabasesName!);
+        var (id, itemJason) = await crud.AddAsync(requestBody, CollectionName, DatabasesName);
         if (string.IsNullOrEmpty(id))
             return Results.NotFound();
         return Results.Created($"/machinesdetails/{id}", itemJason);
@@ -69,7 +69,7 @@ public static class MachinesDetails
 
     private static async Task<IResult> Delete(MongoCrud crud, HttpContext context, string id)
     {
-        var item = await crud.GetItemJsonAsync(id, CollectionName!, DatabasesName!);
+        var item = await crud.GetItemJsonAsync(id, CollectionName, DatabasesName);
         var json = JsonSerializer.Serialize(item);
         var hashElement = MongoAssistant.JsonGetProperty(json, "Hash");
         if (hashElement != null)
@@ -78,11 +78,10 @@ public static class MachinesDetails
             await MachinesLogs.Delete(crud, context, "Hash", hash);
         }
 
-        var deleted = await crud.RemoveAsync(id, CollectionName!, DatabasesName!);
+        var deleted = await crud.RemoveAsync(id, CollectionName, DatabasesName);
         if (!deleted)
             return Results.NotFound();
         return Results.NoContent();
     }
-
 
 }
