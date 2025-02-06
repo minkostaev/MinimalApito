@@ -1,6 +1,7 @@
 ﻿namespace Apito.Services;
 
 using Apito.Models;
+using Mintzat.Email.Services;
 using System.Text;
 using System.Text.Json;
 

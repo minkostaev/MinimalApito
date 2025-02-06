@@ -20,10 +20,9 @@ public static class BuilderEndpoints
         ///    .ReportApiVersions()
         ///    .Build();
 
-        var imoti = root.MapGroup("/imoti");
+        var imoti = root.MapGroup("/imoti");///.WithApiVersionSet(apiVersionSet);
         Imoti.Map(imoti, "Imoti", "ShortcutsGrid");
 
-        ///var machinesDetails = root.MapGroup("/machinesdetails");///.WithApiVersionSet(apiVersionSet);
         MachinesDetails.Map(root);
 
         var machinesLogs = root.MapGroup("/machineslogs");

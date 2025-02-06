@@ -55,9 +55,7 @@ public static class MintzatEmail
                 secondHeader + topic + "<br/>" + message + secondFooter);
         }
 
-        if (!isSent)
-            return Results.NotFound();
-        return Results.Created();
+        return ResponseResults.Post(isSent, null);
     }
 
     private static async Task<bool> SendEmail(IResendSender sender, string[] toEmails, string fromEmail, string name, string topic, string message)
@@ -70,6 +68,5 @@ public static class MintzatEmail
             null, [defaultMail], null, name);
         return result.Item1;
     }
-
 
 }
