@@ -2,6 +2,7 @@
 
 using Apito.Models;
 using Apito.Services.Endpoints;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 
 public static class BuilderEndpoints
@@ -36,6 +37,8 @@ public static class BuilderEndpoints
         root.MapGet("/logger", () => { return CustomLogger.Get(); }).WithName("GetLogger").WithOpenApi();
         root.MapGet("/cors", () => { return AppValues.Cors; }).WithName("GetCors").WithOpenApi();
         root.MapGet("/paths", () => { return AppValues.DeployedPaths; }).WithName("GetPaths").WithOpenApi();
+        root.MapGet("/auth", [Authorize] () => "This is a secure endpoint!");
+        //root.MapGet("/auth", () => "This is a secure endpoint!").RequireAuthorization();
     }
 
     public static void AddMore(this RouteHandlerBuilder routeHandlerBuilder,

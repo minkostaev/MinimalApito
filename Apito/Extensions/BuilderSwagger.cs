@@ -55,6 +55,24 @@ public static class BuilderSwagger
 
             ////options.SwaggerDoc("v2", new OpenApiInfo { Title = "Your API V2", Version = "v2" });
 
+            // Auth0
+            var securitySchema = new OpenApiSecurityScheme
+            {
+                Description = "Using the Authorization header with the Bearer scheme.",
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            };
+            options.AddSecurityDefinition("Bearer", securitySchema);
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement
+            { { securitySchema, ["Bearer"] } });
+
 
             //var provider = services.BuildServiceProvider()
             //.GetRequiredService<IApiVersionDescriptionProvider>();

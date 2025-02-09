@@ -26,6 +26,10 @@ public static class BuilderApp
         app.AddSwaggerUses();
         ///}
 
+        // Auth0
+        app.UseAuthentication();
+        app.UseAuthorization();
+
         app.Use(async (context, next) =>
         {
             context.Response.Headers.Append("Version", AppValues.Version);
