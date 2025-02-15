@@ -5,3 +5,4 @@
 - **Minimal API** structure
 - MongoDB
 - Swagger
+- Auth0

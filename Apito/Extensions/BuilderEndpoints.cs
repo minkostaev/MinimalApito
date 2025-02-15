@@ -38,7 +38,7 @@ public static class BuilderEndpoints
         root.MapGet("/cors", () => { return AppValues.Cors; }).WithName("GetCors").WithOpenApi();
         root.MapGet("/paths", () => { return AppValues.DeployedPaths; }).WithName("GetPaths").WithOpenApi();
         root.MapGet("/auth", [Authorize] () => "This is a secure endpoint!");
-        //root.MapGet("/auth", () => "This is a secure endpoint!").RequireAuthorization();
+        root.MapGet("/auth2", () => "This is a secure endpoint2!").RequireAuthorization();
     }
 
     public static void AddMore(this RouteHandlerBuilder routeHandlerBuilder,

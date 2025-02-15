@@ -10,10 +10,10 @@ public static class Imoti
         CollectionName = collectionName;
         DatabasesName = databasesName;
         
-        app.MapGet("", GetAll);
+        app.MapGet("", GetAll).RequireAuthorization();
         app.MapPost("", PostOne);
         
-        var item = app.MapGroup("/{id}");//id:guid
+        var item = app.MapGroup("/{id}").RequireAuthorization();//id:guid
 
         item.MapGet("", GetOne);
         item.MapPut("", PutOne);
