@@ -2,7 +2,6 @@
 
 using Apito.Models;
 using Apito.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Mintzat.Email.ResendCom;
 using MongoDB.Driver;
 
@@ -12,26 +11,29 @@ public static class BuilderServices
     {
         CustomLogger.Add("BuilderServices", CustomLogger.GetLine(), $"version: {AppValues.Version}");
 
-        services.AddSwaggerServices();
+        AppValues.CorsOrigins = configuration.GetSection("CORS:Allow-Origins").Get<string[]>();
+        AppValues.CorsName = configuration["CORS:Policy-Name"];
+        AppValues.Auth0Domain = configuration["Auth0:Domain"];
+        AppValues.Auth0Audience = configuration["Auth0:Audience"];
 
-        // Auth0
+        services.AddSwaggerServices();//Extension
+
+        //Auth0
         services.AddAuthentication(options =>
         {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultAuthenticateScheme = AppValues.Bearer;
+            options.DefaultChallengeScheme = AppValues.Bearer;
         }).AddJwtBearer(options =>
         {
-            options.Authority = $"https://{configuration["Auth0:Domain"]}/";
-            options.Audience = configuration["Auth0:Audience"];
+            options.Authority = AppValues.Auth0Authority;
+            options.Audience = AppValues.Auth0Audience;
         });
         services.AddAuthorization();
 
-
-        AppValues.Cors = configuration.GetSection("CORS:Allow-Origins").Get<string[]>()!;
         services.AddCors(options =>
         {
-            options.AddPolicy(name: configuration["CORS:Policy-Name"]!,
-            cnfg => { cnfg.WithOrigins(AppValues.Cors).AllowAnyMethod().AllowAnyHeader(); });
+            options.AddPolicy(name: AppValues.CorsName!,
+            cnfg => { cnfg.WithOrigins(AppValues.CorsOrigins!).AllowAnyMethod().AllowAnyHeader(); });
             ///cnfg => { cnfg.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); });
         });
 

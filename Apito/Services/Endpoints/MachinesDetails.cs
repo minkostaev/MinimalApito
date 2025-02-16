@@ -67,7 +67,7 @@ public static class MachinesDetails
     }
 
 
-    private static async Task<IResult> Delete(MongoCrud crud, HttpContext context, string id)
+    private static async Task<IResult> Delete(MongoCrud crud, string id)
     {
         var item = await crud.GetItemJsonAsync(id, CollectionName, DatabasesName);
         var json = JsonSerializer.Serialize(item);
@@ -75,7 +75,7 @@ public static class MachinesDetails
         if (hashElement != null)
         {
             string hash = hashElement?.GetString()!;
-            await MachinesLogs.Delete(crud, context, "Hash", hash);
+            await MachinesLogs.Delete(crud, "Hash", hash);
         }
 
         var deleted = await crud.RemoveAsync(id, CollectionName, DatabasesName);

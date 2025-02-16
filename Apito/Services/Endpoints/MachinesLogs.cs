@@ -107,7 +107,7 @@ public static class MachinesLogs
         return Results.NoContent();
     }
 
-    public static async Task<IResult> Delete(MongoCrud crud, HttpContext context, string propertyName, string propertyValue)
+    public static async Task<IResult> Delete(MongoCrud crud, string propertyName, string propertyValue)
     {
         if (string.IsNullOrEmpty(propertyName))
             return Results.NoContent();

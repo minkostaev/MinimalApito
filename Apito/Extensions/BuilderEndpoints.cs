@@ -35,7 +35,7 @@ public static class BuilderEndpoints
         MintzatEmail.Map(emailResend);
 
         root.MapGet("/logger", () => { return CustomLogger.Get(); }).WithName("GetLogger").WithOpenApi();
-        root.MapGet("/cors", () => { return AppValues.Cors; }).WithName("GetCors").WithOpenApi();
+        root.MapGet("/cors", () => { return AppValues.CorsOrigins; }).WithName("GetCors").WithOpenApi();
         root.MapGet("/paths", () => { return AppValues.DeployedPaths; }).WithName("GetPaths").WithOpenApi();
         root.MapGet("/auth", [Authorize] () => "This is a secure endpoint!");
         root.MapGet("/auth2", () => "This is a secure endpoint2!").RequireAuthorization();

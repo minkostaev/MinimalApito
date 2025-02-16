@@ -37,27 +37,25 @@ public class VaultConfiguration
             ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; }
             #pragma warning restore S4830
         };
-        using (var client = new HttpClient(clientHandler))
+        using var client = new HttpClient(clientHandler);
+        try
         {
-            try
-            {
-                var content = new StringContent(jsonDto, Encoding.UTF8, "application/json");
-                var response = await client.PostAsync(_vaultUri, content);
-                if (!response.IsSuccessStatusCode)
-                    return null;
-                
-                var resJson = await response.Content.ReadFromJsonAsync<VaultDto>();
-
-                var crypto = new CryptographyAlgorithm();
-                string result = crypto.DecryptCipherTextToPlainText(
-                    resJson!.Property, _vaultCrypt, resJson.Id);
-
-                return result;
-            }
-            catch (Exception)
-            {
+            var content = new StringContent(jsonDto, Encoding.UTF8, "application/json");
+            var response = await client.PostAsync(_vaultUri, content);
+            if (!response.IsSuccessStatusCode)
                 return null;
-            }
+
+            var resJson = await response.Content.ReadFromJsonAsync<VaultDto>();
+
+            var crypto = new CryptographyAlgorithm();
+            string result = crypto.DecryptCipherTextToPlainText(
+                resJson!.Property, _vaultCrypt, resJson.Id);
+
+            return result;
+        }
+        catch (Exception)
+        {
+            return null;
         }
     }
 
@@ -69,44 +67,42 @@ public class VaultConfiguration
 
         var clientHandler = new HttpClientHandler
         {
-#pragma warning disable S4830 // Server certificates should be verified during SSL/TLS connections
+            #pragma warning disable S4830 // Server certificates should be verified during SSL/TLS connections
             ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; }
-#pragma warning restore S4830
+            #pragma warning restore S4830
         };
-        using (var client = new HttpClient(clientHandler))
+        using var client = new HttpClient(clientHandler);
+        try
         {
-            try
+            var content = new StringContent(jsonDto, Encoding.UTF8, "application/json");
+            var response = await client.PostAsync(_vaultUri2, content);
+            if (!response.IsSuccessStatusCode)
             {
-                var content = new StringContent(jsonDto, Encoding.UTF8, "application/json");
-                var response = await client.PostAsync(_vaultUri2, content);
-                if (!response.IsSuccessStatusCode)
-                {
-                    CustomLogger.Add(this, CustomLogger.GetLine(), $"IsSuccessStatusCode = false {jsonDto}");
-                    return null;
-                }
-
-                var resJson = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
-                if (resJson == null)
-                {
-                    CustomLogger.Add(this, CustomLogger.GetLine(), "resJson = null " + jsonDto);
-                    return null;
-                }
-
-                List<string> result = [];
-                foreach (var d in resJson)
-                {
-                    var crypto = new CryptographyAlgorithm();
-                    string key = crypto.DecryptCipherTextToPlainText(
-                        d.Value, _vaultCrypt, d.Key);
-                    result.Add(key);
-                }
-                return result;
-            }
-            catch (Exception ex)
-            {
-                CustomLogger.Add(this, CustomLogger.GetLine(), string.IsNullOrEmpty(ex.StackTrace) ? ex.Message : ex.Message + ex.StackTrace);
+                CustomLogger.Add(this, CustomLogger.GetLine(), $"IsSuccessStatusCode = false {jsonDto}");
                 return null;
             }
+
+            var resJson = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+            if (resJson == null)
+            {
+                CustomLogger.Add(this, CustomLogger.GetLine(), "resJson = null " + jsonDto);
+                return null;
+            }
+
+            List<string> result = [];
+            foreach (var d in resJson)
+            {
+                var crypto = new CryptographyAlgorithm();
+                string key = crypto.DecryptCipherTextToPlainText(
+                    d.Value, _vaultCrypt, d.Key);
+                result.Add(key);
+            }
+            return result;
+        }
+        catch (Exception ex)
+        {
+            CustomLogger.Add(this, CustomLogger.GetLine(), string.IsNullOrEmpty(ex.StackTrace) ? ex.Message : ex.Message + ex.StackTrace);
+            return null;
         }
     }
 

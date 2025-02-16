@@ -1,6 +1,7 @@
 ﻿namespace Apito.Extensions;
 
 using Apito.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
@@ -66,12 +67,12 @@ public static class BuilderSwagger
                 Reference = new OpenApiReference
                 {
                     Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
+                    Id = AppValues.Bearer
                 }
             };
-            options.AddSecurityDefinition("Bearer", securitySchema);
+            options.AddSecurityDefinition(AppValues.Bearer, securitySchema);
             options.AddSecurityRequirement(new OpenApiSecurityRequirement
-            { { securitySchema, ["Bearer"] } });
+            { { securitySchema, [AppValues.Bearer] } });
 
 
             //var provider = services.BuildServiceProvider()
