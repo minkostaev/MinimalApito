@@ -13,11 +13,11 @@ public static class MachinesRecords
     {
         var app = root.MapGroup(RootEndpoint);
 
-        app.MapGet("", GetAll);
+        app.MapGet("", GetAll).RequireAuthorization();
         app.MapPost("", PostOne);
-        app.MapDelete("", DeleteMany);
+        app.MapDelete("", DeleteMany).RequireAuthorization();
 
-        var item = app.MapGroup("/{id}");//id:guid
+        var item = app.MapGroup("/{id}").RequireAuthorization();//id:guid
 
         item.MapGet("", GetOne);
         item.MapDelete("", DeleteOne);

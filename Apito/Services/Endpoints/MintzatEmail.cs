@@ -7,7 +7,7 @@ public static class MintzatEmail
 {
     public static void Map(RouteGroupBuilder app)
     {
-        app.MapPost("", PostOneAsync);
+        app.MapPost("", PostOneAsync).RequireAuthorization();
         
     }
 

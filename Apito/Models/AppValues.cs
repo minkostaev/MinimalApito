@@ -14,12 +14,6 @@ public static class AppValues
 
     public static string ResendConnection { get; set; } = string.Empty;
 
-    public static string[]? CorsOrigins { get; set; }
-    public static string? CorsName { get; set; }
-    public static string? Auth0Domain { get; set; }
-    public static string? Auth0Audience { get; set; }
-    public static string? Auth0Authority => $"https://{Auth0Domain}/";
-
     public static string Bearer => JwtBearerDefaults.AuthenticationScheme;
 
     public static List<string> DeployedPaths

@@ -1,7 +1,9 @@
 using Apito.Extensions;
+using Apito.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-await builder.Services.AddAll(builder.Configuration);//Extension
+AppSettings.Init(builder.Configuration);
+await builder.Services.AddAll();//Extension
 var app = builder.Build();
 ///app.Environment.IsDevelopment();
 app.AddAllUses();//Extension

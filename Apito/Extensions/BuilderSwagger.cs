@@ -1,7 +1,6 @@
 ﻿namespace Apito.Extensions;
 
 using Apito.Models;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
@@ -56,14 +55,14 @@ public static class BuilderSwagger
 
             ////options.SwaggerDoc("v2", new OpenApiInfo { Title = "Your API V2", Version = "v2" });
 
-            // Auth0
+            //Auth0
             var securitySchema = new OpenApiSecurityScheme
             {
                 Description = "Using the Authorization header with the Bearer scheme.",
                 Name = "Authorization",
                 In = ParameterLocation.Header,
                 Type = SecuritySchemeType.Http,
-                Scheme = "bearer",
+                Scheme = AppValues.Bearer,
                 Reference = new OpenApiReference
                 {
                     Type = ReferenceType.SecurityScheme,

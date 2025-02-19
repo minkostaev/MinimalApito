@@ -7,14 +7,9 @@ using MongoDB.Driver;
 
 public static class BuilderServices
 {
-    public static async Task AddAll(this IServiceCollection services, ConfigurationManager configuration)
+    public static async Task AddAll(this IServiceCollection services)
     {
         CustomLogger.Add("BuilderServices", CustomLogger.GetLine(), $"version: {AppValues.Version}");
-
-        AppValues.CorsOrigins = configuration.GetSection("CORS:Allow-Origins").Get<string[]>();
-        AppValues.CorsName = configuration["CORS:Policy-Name"];
-        AppValues.Auth0Domain = configuration["Auth0:Domain"];
-        AppValues.Auth0Audience = configuration["Auth0:Audience"];
 
         services.AddSwaggerServices();//Extension
 
@@ -25,21 +20,21 @@ public static class BuilderServices
             options.DefaultChallengeScheme = AppValues.Bearer;
         }).AddJwtBearer(options =>
         {
-            options.Authority = AppValues.Auth0Authority;
-            options.Audience = AppValues.Auth0Audience;
+            options.Authority = AppSettings.Auth0Authority;
+            options.Audience = AppSettings.Auth0Audience;
         });
         services.AddAuthorization();
 
         services.AddCors(options =>
         {
-            options.AddPolicy(name: AppValues.CorsName!,
-            cnfg => { cnfg.WithOrigins(AppValues.CorsOrigins!).AllowAnyMethod().AllowAnyHeader(); });
+            options.AddPolicy(name: AppSettings.CorsName!,
+            cnfg => { cnfg.WithOrigins(AppSettings.CorsOrigins!).AllowAnyMethod().AllowAnyHeader(); });
             ///cnfg => { cnfg.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); });
         });
 
         // Get secrets from my vault
-        var vault = new VaultConfiguration(configuration["Vault"]!);
-        string[] secretKeys = [configuration["DbMongo:kkkppp"]!, configuration["Emails:resend"]!];
+        var vault = new VaultConfiguration(AppSettings.Vault!);
+        string[] secretKeys = [AppSettings.MongoKkkppp!, AppSettings.EmailsResend!];
         var connections = await vault.Get(secretKeys);
 
         if (connections != null)

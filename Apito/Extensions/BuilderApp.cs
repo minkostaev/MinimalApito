@@ -18,7 +18,7 @@ public static class BuilderApp
         app.UseDefaultFiles();// This will look for index.html by default
         app.UseStaticFiles();// wwwroot
 
-        app.UseCors(AppValues.CorsName!);
+        app.UseCors(AppSettings.CorsName!);
         app.UseHttpsRedirection();
 
         app.AddSwaggerUses();//Extension
