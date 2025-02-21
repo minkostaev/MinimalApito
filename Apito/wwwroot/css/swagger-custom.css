@@ -6,6 +6,10 @@
     background-color: #154360;
 }
 
+.swagger-ui .scheme-container {
+    background: unset;
+}
+
 .swagger-ui .info {
     margin: 12px 0;
 }

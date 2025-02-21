@@ -34,11 +34,12 @@ public static class BuilderEndpoints
         var emailResend = root.MapGroup("/emailresend");
         MintzatEmail.Map(emailResend);
 
-        root.MapGet("/logger", () => { return CustomLogger.Get(); }).WithName("GetLogger").WithOpenApi();
-        root.MapGet("/cors", () => { return AppSettings.CorsOrigins; }).WithName("GetCors").WithOpenApi();
-        root.MapGet("/paths", () => { return AppValues.DeployedPaths; }).WithName("GetPaths").WithOpenApi();
-        ///root.MapGet("/auth", [Authorize] () => "This is a secure endpoint!");
-        ///root.MapGet("/auth2", () => "This is a secure endpoint2!").RequireAuthorization();
+        root.MapGet("/logger", [Authorize] () =>
+        { return CustomLogger.Get(); }).WithName("GetLogger").WithOpenApi();
+        root.MapGet("/cors", [Authorize] () =>
+        { return AppSettings.CorsOrigins; }).WithName("GetCors").WithOpenApi();
+        root.MapGet("/paths", [Authorize] () => 
+        { return AppValues.DeployedPaths; }).WithName("GetPaths").WithOpenApi();
     }
 
     public static void AddMore(this RouteHandlerBuilder routeHandlerBuilder,

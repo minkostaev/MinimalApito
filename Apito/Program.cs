@@ -2,7 +2,7 @@ using Apito.Extensions;
 using Apito.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-AppSettings.Init(builder.Configuration);
+AppSettings.Init(builder.Configuration);//appsettings.json to obj
 await builder.Services.AddAll();//Extension
 var app = builder.Build();
 ///app.Environment.IsDevelopment();
