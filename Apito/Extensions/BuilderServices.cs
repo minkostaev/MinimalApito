@@ -11,7 +11,12 @@ public static class BuilderServices
     {
         CustomLogger.Add("BuilderServices", CustomLogger.GetLine(), $"version: {AppValues.Version}");
 
-        services.AddSwaggerServices();//Extension
+        services.AddCors(options =>
+        {
+            options.AddPolicy(name: AppSettings.CorsName!,
+            cnfg => { cnfg.WithOrigins(AppSettings.CorsOrigins!).AllowAnyMethod().AllowAnyHeader(); });
+            ///cnfg => { cnfg.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); });
+        });
 
         //Auth0
         services.AddAuthentication(options =>
@@ -25,30 +30,9 @@ public static class BuilderServices
         });
         services.AddAuthorization();
 
-        services.AddCors(options =>
-        {
-            options.AddPolicy(name: AppSettings.CorsName!,
-            cnfg => { cnfg.WithOrigins(AppSettings.CorsOrigins!).AllowAnyMethod().AllowAnyHeader(); });
-            ///cnfg => { cnfg.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); });
-        });
+        services.AddSwaggerServices();//Extension
 
-        // Get secrets from my vault
-        var vault = new VaultConfiguration(AppSettings.Vault!);
-        string[] secretKeys = [AppSettings.MongoKkkppp!, AppSettings.EmailsResend!];
-        var connections = await vault.Get(secretKeys);
-
-        if (connections != null)
-        {
-            if (connections.Count > 0)
-                AppValues.MongoConnection = connections[0];
-            if (connections.Count > 1)
-                AppValues.ResendConnection = connections[1];
-            CustomLogger.Add("BuilderServices", CustomLogger.GetLine(), $"connections count: {connections.Count}");
-        }
-        else
-        {
-            CustomLogger.Add("BuilderServices", CustomLogger.GetLine(), "connections failed");
-        }
+        await SetSecrets();
 
         if (!string.IsNullOrWhiteSpace(AppValues.MongoConnection))
         {
@@ -69,6 +53,26 @@ public static class BuilderServices
             CustomLogger.Add("BuilderServices", CustomLogger.GetLine(), "Resend Connection empty");
         }
 
+    }
+
+    public static async Task SetSecrets()
+    {
+        var vault = new VaultConfiguration(AppSettings.Vault!);
+        string[] secretKeys = [AppSettings.MongoKkkppp!, AppSettings.EmailsResend!];
+        var connections = await vault.Get(secretKeys);
+
+        if (connections != null)
+        {
+            if (connections.Count > 0)
+                AppValues.MongoConnection = connections[0];
+            if (connections.Count > 1)
+                AppValues.ResendConnection = connections[1];
+            CustomLogger.Add("BuilderServices", CustomLogger.GetLine(), $"connections count: {connections.Count}");
+        }
+        else
+        {
+            CustomLogger.Add("BuilderServices", CustomLogger.GetLine(), "connections failed");
+        }
     }
 
 }

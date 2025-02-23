@@ -9,6 +9,12 @@ public static class BuilderApp
         app.UseCors(AppSettings.CorsName!);
         app.UseHttpsRedirection();
 
+        //Auth0
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        app.AddSwaggerUses();//Extension
+
         app.UseDefaultFiles();// This will look for index.html by default
         app.UseStaticFiles();// wwwroot
         ///app.Use(async (context, next) =>
@@ -20,11 +26,6 @@ public static class BuilderApp
         ///    }
         ///    await next();
         ///});
-
-        app.AddSwaggerUses();//Extension
-
-        app.UseAuthentication();//Auth0
-        app.UseAuthorization();
 
         app.Use(async (context, next) =>
         {
