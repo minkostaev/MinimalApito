@@ -22,7 +22,7 @@ public static class BuilderEndpoints
         ///    .Build();
 
         var imoti = root.MapGroup("/imoti");///.WithApiVersionSet(apiVersionSet);
-        Imoti.Map(imoti, "Imoti", "ShortcutsGrid");
+        Imoti.Map(imoti);
 
         MachinesDetails.Map(root);
 

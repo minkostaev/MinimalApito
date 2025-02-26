@@ -2,14 +2,12 @@
 
 public static class Imoti
 {
-    private static string? CollectionName { get; set; }
-    private static string? DatabasesName { get; set; }
+    private static string CollectionName => "Imoti";
+    private static string DatabasesName => "ShortcutsGrid";
+    ///private static string RootEndpoint => "/imoti";
 
-    public static void Map(RouteGroupBuilder app, string collectionName, string databasesName)
+    public static void Map(RouteGroupBuilder app)
     {
-        CollectionName = collectionName;
-        DatabasesName = databasesName;
-        
         app.MapGet("", GetAll).RequireAuthorization();
         app.MapPost("", PostOne);
         
