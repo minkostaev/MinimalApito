@@ -5,9 +5,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>true</InvariantGlobalization>
-    <Version>1.1.7</Version>
+    <Version>1.1.8</Version>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <UserSecretsId>10ae05a4-aa93-43e0-a2dc-daf59485678c</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

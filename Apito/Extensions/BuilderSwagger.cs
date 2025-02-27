@@ -34,26 +34,11 @@ public static class BuilderSwagger
         services.AddSwaggerGen(options =>
         {
             //options.ExampleFilters();
-            options.SwaggerDoc("v1", new OpenApiInfo
-            {
-                Version = AppValues.Version,
-                Title = "Apito",
-                Description = "Apito Description todo",
-                //TermsOfService = new Uri("https://github.com/minkostaev/MinimalApito"),
-                Contact = new OpenApiContact
-                {
-                    Name = "NAME",
-                    Email = "name@mail.com",
-                    Url = new Uri($"https://github.com/minkostaev/MinimalApito")
-                },
-                License = new OpenApiLicense
-                {
-                    Name = "Source",
-                    Url = new Uri($"https://github.com/minkostaev/MinimalApito")
-                }
-            });
 
-            ////options.SwaggerDoc("v2", new OpenApiInfo { Title = "Your API V2", Version = "v2" });
+            foreach (var info in AppSettings.Swaggers)
+            {
+                options.SwaggerDoc(info.Name, SwaggerInfo.CreateInfo(info));
+            }
 
             //Auth0
             var securitySchema = new OpenApiSecurityScheme

@@ -10,6 +10,7 @@ public static class AppSettings
     public static string? Vault { get; private set; }
     public static string? MongoKkkppp { get; private set; }
     public static string? EmailsResend { get; private set; }
+    public static List<SwaggerInfo>? Swaggers { get; private set; }
 
     public static void Init(ConfigurationManager configuration)
     {
@@ -20,5 +21,17 @@ public static class AppSettings
         Vault = configuration["Vault"];
         MongoKkkppp = configuration["DbMongo:kkkppp"];
         EmailsResend = configuration["Emails:resend"];
+        Swaggers = [];
+        int i = 0;
+        bool hasSwaggers = true;
+        while (hasSwaggers)
+        {
+            i++;
+            var swaggerSection = configuration.GetSection($"Swagger:v{i}");
+            hasSwaggers = swaggerSection.Exists();
+            var swaggerObj = swaggerSection.Get<SwaggerInfo>();
+            if (swaggerObj != null)
+                Swaggers.Add(swaggerObj);
+        }
     }
 }
