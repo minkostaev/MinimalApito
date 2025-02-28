@@ -1,6 +1,6 @@
-﻿using Microsoft.OpenApi.Models;
+﻿namespace Apito.Models;
 
-namespace Apito.Models;
+using Microsoft.OpenApi.Models;
 
 public class SwaggerInfo
 {
@@ -16,24 +16,37 @@ public class SwaggerInfo
 
     public static OpenApiInfo CreateInfo(SwaggerInfo swaggerInfo)
     {
-        return new OpenApiInfo
+        try
         {
-            Version = AppValues.Version,
-            Title = swaggerInfo.Title,
-            Description = swaggerInfo.Description,
-            TermsOfService = new Uri(swaggerInfo.TermsOfService),
-            License = new OpenApiLicense
+            Uri? termsOfService = null;
+            if (!string.IsNullOrWhiteSpace(swaggerInfo.TermsOfService))
+                termsOfService = new Uri(swaggerInfo.TermsOfService);
+            Uri? licenseUrl = null;
+            if (!string.IsNullOrWhiteSpace(swaggerInfo.LicenseUrl))
+                licenseUrl = new Uri(swaggerInfo.LicenseUrl);
+            Uri? contactUrl = null;
+            if (!string.IsNullOrWhiteSpace(swaggerInfo.ContactUrl))
+                contactUrl = new Uri(swaggerInfo.ContactUrl);
+            return new OpenApiInfo
             {
-                Name = swaggerInfo.LicenseName,
-                Url = new Uri(swaggerInfo.LicenseUrl)
-            },
-            Contact = new OpenApiContact
-            {
-                Name = swaggerInfo.ContactName,
-                Email = swaggerInfo.ContactEmail,
-                Url = new Uri(swaggerInfo.ContactUrl)
-            }
-        };
+                Version = AppValues.Version,
+                Title = swaggerInfo.Title,
+                Description = swaggerInfo.Description,
+                TermsOfService = termsOfService,
+                License = new OpenApiLicense
+                {
+                    Name = swaggerInfo.LicenseName,
+                    Url = licenseUrl
+                },
+                Contact = new OpenApiContact
+                {
+                    Name = swaggerInfo.ContactName,
+                    Email = swaggerInfo.ContactEmail,
+                    Url = contactUrl
+                }
+            };
+        }
+        catch (Exception) { return new OpenApiInfo(); }
     }
 
 }

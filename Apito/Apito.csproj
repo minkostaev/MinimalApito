@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>true</InvariantGlobalization>
-    <Version>1.1.8</Version>
+    <Version>1.1.9</Version>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
@@ -18,7 +18,7 @@
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="[8.0.13]" />
     <PackageReference Include="Mintzat.Email" Version="1.0.16" />
     <PackageReference Include="MongoDB.Driver" Version="3.2.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.3.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.3.1" />
   </ItemGroup>
 
 </Project>

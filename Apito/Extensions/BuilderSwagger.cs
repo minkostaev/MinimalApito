@@ -35,9 +35,12 @@ public static class BuilderSwagger
         {
             //options.ExampleFilters();
 
-            foreach (var info in AppSettings.Swaggers)
+            if (AppSettings.Swaggers != null)
             {
-                options.SwaggerDoc(info.Name, SwaggerInfo.CreateInfo(info));
+                foreach (var info in AppSettings.Swaggers)//add versions
+                {
+                    options.SwaggerDoc(info.Name, SwaggerInfo.CreateInfo(info));
+                }
             }
 
             //Auth0
@@ -111,25 +114,30 @@ public static class BuilderSwagger
     {
         //Properties/launchSettings.json
         string address = "swagger";//launchUrl
-        app.UseSwagger(c =>
+        app.UseSwagger(options =>
         {
-            c.RouteTemplate = address + "/{documentName}/swagger.{json|yaml}";
+            options.RouteTemplate = address + "/{documentName}/swagger.{json|yaml}";
         });
-        app.UseSwaggerUI(c =>
+        app.UseSwaggerUI(options =>
         {
-            c.RoutePrefix = address;
-            c.SwaggerEndpoint("v1/swagger.json", "v1 Name");
-            //c.SwaggerEndpoint("v2/swagger.json", "v2 Label");
-            c.DocExpansion(DocExpansion.None);
-            c.EnableTryItOutByDefault();
+            options.RoutePrefix = address;
+            if (AppSettings.Swaggers != null)
+            {
+                foreach (var info in AppSettings.Swaggers)//add versions
+                {
+                    options.SwaggerEndpoint($"{info.Name}/swagger.json", info.Title);
+                }
+            }
+            options.DocExpansion(DocExpansion.None);
+            options.EnableTryItOutByDefault();
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "swagger", "swagger.html");
             if (File.Exists(filePath))
-                c.IndexStream = () => new FileStream(filePath, FileMode.Open, FileAccess.Read);
+                options.IndexStream = () => new FileStream(filePath, FileMode.Open, FileAccess.Read);
 
             //var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
             //foreach (var description in provider.ApiVersionDescriptions)
             //{
-            //    c.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
+            //    options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
             //                            description.GroupName.ToUpperInvariant());
             //}
 
