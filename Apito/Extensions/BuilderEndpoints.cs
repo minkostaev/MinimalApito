@@ -8,15 +8,26 @@ using Microsoft.AspNetCore.Builder;
 
 public static class BuilderEndpoints
 {
-    public static void RegisterAllEndpoints(this IEndpointRouteBuilder root)
+    public static void RegisterAllEndpoints(this IEndpointRouteBuilder root)//5
     {
         // Versioning
-        var versionSet = root.NewApiVersionSet()
-            .HasApiVersion(new ApiVersion(1, 0))
-            .HasApiVersion(new ApiVersion(2, 0))
-            //.HasDeprecatedApiVersion(new ApiVersion(1.0))
-            //.HasApiVersion(new ApiVersion(2.0))
-            .ReportApiVersions().Build();
+        var versionBuilder = root.NewApiVersionSet();
+        int mjr = 0;
+        if (AppSettings.Swaggers != null)
+        {
+            foreach (var info in AppSettings.Swaggers)//add versions
+            {
+                mjr++;
+                versionBuilder.HasApiVersion(new ApiVersion(mjr));
+            }
+        }
+        var versionSet = versionBuilder.ReportApiVersions().Build();
+        ///var versionSet = root.NewApiVersionSet()
+        ///    .HasApiVersion(new ApiVersion(1, 0))
+        ///    .HasApiVersion(new ApiVersion(2, 0))
+        ///    //.HasDeprecatedApiVersion(new ApiVersion(1.0))
+        ///    //.HasApiVersion(new ApiVersion(2.0))
+        ///    .ReportApiVersions().Build();
 
         var items = root.MapGroup("/items");
         Items.Map(items, "Users", "ShortcutsGrid");
@@ -24,13 +35,7 @@ public static class BuilderEndpoints
         var itemsAsync = root.MapGroup("/itemsasync");
         ItemsAsync.Map(itemsAsync, "Users", "ShortcutsGrid");
 
-        ///ApiVersionSet apiVersionSet = root.NewApiVersionSet()
-        ///    .HasApiVersion(new Asp.Versioning.ApiVersion(1))
-        ///    .HasApiVersion(new Asp.Versioning.ApiVersion(2))
-        ///    .ReportApiVersions()
-        ///    .Build();
-
-        var imoti = root.MapGroup("/imoti");///.WithApiVersionSet(apiVersionSet);
+        var imoti = root.MapGroup("/imoti");
         Imoti.Map(imoti);
 
         MachinesDetails.Map(root);
@@ -59,6 +64,7 @@ public static class BuilderEndpoints
             return "Version " + apiVersion?.MajorVersion?.ToString();
         }).WithApiVersionSet(versionSet).MapToApiVersion(2.0);
 
+        // Versioning in the pattern
         root.MapGet("v{version:apiVersion}/wthr", (HttpContext context) =>
         {
             var apiVersion = context.GetRequestedApiVersion();

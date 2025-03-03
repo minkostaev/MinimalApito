@@ -1,13 +1,13 @@
 using Apito.Extensions;
-using Apito.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-AppSettings.Init(builder.Configuration);//appsettings.json to obj
+builder.Init();//Extension
 await builder.Services.AddAll();//Extension
+builder.Services.AddSwaggerServices();//Extension
 var app = builder.Build();
-///app.Environment.IsDevelopment();
 app.AddAllUses();//Extension
 app.RegisterAllEndpoints();//Extension
+app.AddSwaggerUses();//Extension
 await app.RunAsync();
 
 // issue:
@@ -18,9 +18,6 @@ await app.RunAsync();
 //net stop winnat
 //net start winnat
 
-// header in request -      x-api-version
-
 // to checkout
 // https://geektest.co/programming-tests
-
-//https://www.youtube.com/watch?v=9MOpm5id2AI&list=PLgRlicSxjeMOUGRV28LGyqDgL0IySmGJ6&index=3
+// https://www.youtube.com/watch?v=9MOpm5id2AI&list=PLgRlicSxjeMOUGRV28LGyqDgL0IySmGJ6&index=3

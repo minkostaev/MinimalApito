@@ -10,9 +10,7 @@ public static class AppValues
     public static string? Name => Assembly.GetExecutingAssembly().GetName().Name;
     ///string? vaultKey = Environment.GetEnvironmentVariable("Vault");
 
-    public static string MongoConnection { get; set; } = string.Empty;
-
-    public static string ResendConnection { get; set; } = string.Empty;
+    public static bool IsDevelopment { get; set; }
 
     public static string Bearer => JwtBearerDefaults.AuthenticationScheme;
 
@@ -37,5 +35,8 @@ public static class AppValues
             return result;
         }
     }
+
+    public static string MongoConnection { get; set; } = string.Empty;
+    public static string ResendConnection { get; set; } = string.Empty;
 
 }

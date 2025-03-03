@@ -7,7 +7,7 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 
 public static class BuilderSwagger
 {
-    public static void AddSwaggerServices(this IServiceCollection services)
+    public static void AddSwaggerServices(this IServiceCollection services)//3
     {
         // Versioning
         services.AddApiVersioning(options =>
@@ -40,6 +40,16 @@ public static class BuilderSwagger
                     options.SwaggerDoc(info.Name, SwaggerInfo.CreateInfo(info));
                 }
             }
+            ///var versions = services.BuildServiceProvider()
+            ///                       .GetRequiredService<IApiVersionDescriptionProvider>();
+            ///foreach (var description in versions.ApiVersionDescriptions)
+            ///{
+            ///    options.SwaggerDoc(description.GroupName, new OpenApiInfo()
+            ///    {
+            ///        Title = $"My API {description.ApiVersion}",
+            ///        Version = description.ApiVersion.ToString()
+            ///    });
+            ///}
 
             //Auth0
             var securitySchema = new OpenApiSecurityScheme
@@ -58,22 +68,10 @@ public static class BuilderSwagger
             options.AddSecurityDefinition(AppValues.Bearer, securitySchema);
             options.AddSecurityRequirement(new OpenApiSecurityRequirement
             { { securitySchema, [AppValues.Bearer] } });
-
-
-            //var provider = services.BuildServiceProvider()
-            //.GetRequiredService<IApiVersionDescriptionProvider>();
-            //foreach (var description in provider.ApiVersionDescriptions)
-            //{
-            //    options.SwaggerDoc(description.GroupName, new OpenApiInfo()
-            //    {
-            //        Title = $"My API {description.ApiVersion}",
-            //        Version = description.ApiVersion.ToString()
-            //    });
-            //}
         });
     }
 
-    public static void AddSwaggerUses(this WebApplication app)
+    public static void AddSwaggerUses(this WebApplication app)//6
     {
         //Properties/launchSettings.json
         string address = "swagger";//launchUrl
@@ -91,28 +89,18 @@ public static class BuilderSwagger
                     options.SwaggerEndpoint($"{info.Name}/swagger.json", info.Title);
                 }
             }
+            ///var versions = app.DescribeApiVersions();
+            ///foreach (var description in versions)
+            ///{
+            ///    var url = $"/swagger/{description.GroupName}/swagger.json";
+            ///    var name = description.GroupName.ToUpperInvariant();
+            ///    options.SwaggerEndpoint(url, name);
+            ///}
             options.DocExpansion(DocExpansion.None);
             options.EnableTryItOutByDefault();
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "swagger", "swagger.html");
             if (File.Exists(filePath))
                 options.IndexStream = () => new FileStream(filePath, FileMode.Open, FileAccess.Read);
-
-            // Versioning
-            //var descriptions = app.DescribeApiVersions();
-            //foreach (var description in descriptions)
-            //{
-            //    var url = $"/swagger/{description.GroupName}/swagger.json";
-            //    var name = description.GroupName.ToUpperInvariant();
-            //    options.SwaggerEndpoint(url, name);
-            //}
-
-            //var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
-            //foreach (var description in provider.ApiVersionDescriptions)
-            //{
-            //    options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
-            //                            description.GroupName.ToUpperInvariant());
-            //}
         });
     }
-
 }

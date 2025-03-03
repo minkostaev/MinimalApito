@@ -2,8 +2,8 @@
 
 public static class AppSettings
 {
-    public static string[]? CorsOrigins { get; private set; }
     public static string? CorsName { get; private set; }
+    public static string[]? CorsOrigins { get; private set; }
     public static string? Auth0Domain { get; private set; }
     public static string? Auth0Audience { get; private set; }
     public static string? Auth0Authority => $"https://{Auth0Domain}/";
@@ -14,8 +14,8 @@ public static class AppSettings
 
     public static void Init(ConfigurationManager configuration)
     {
-        CorsOrigins = configuration.GetSection("CORS:Allow-Origins").Get<string[]>();
         CorsName = configuration["CORS:Policy-Name"];
+        CorsOrigins = configuration.GetSection("CORS:Allow-Origins").Get<string[]>();
         Auth0Domain = configuration["Auth0:Domain"];
         Auth0Audience = configuration["Auth0:Audience"];
         Vault = configuration["Vault"];

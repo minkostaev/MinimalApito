@@ -7,7 +7,7 @@ using MongoDB.Driver;
 
 public static class BuilderServices
 {
-    public static async Task AddAll(this IServiceCollection services)
+    public static async Task AddAll(this IServiceCollection services)//2
     {
         CustomLogger.Add("BuilderServices", CustomLogger.GetLine(), $"version: {AppValues.Version}");
 
@@ -30,7 +30,7 @@ public static class BuilderServices
         });
         services.AddAuthorization();
 
-        services.AddSwaggerServices();//Extension
+        ///services.AddSwaggerServices();//Extension
 
         await SetSecrets();
 
