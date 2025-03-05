@@ -67,8 +67,8 @@ public static class BuilderEndpoints
         // Versioning in the pattern
         root.MapGet("v{version:apiVersion}/wthr", (HttpContext context) =>
         {
-            var apiVersion = context.GetRequestedApiVersion();
-            return "Version " + apiVersion?.MajorVersion?.ToString();
+            var apiVer = context.GetRequestedApiVersion();
+            return "Version " + apiVer?.MajorVersion?.ToString();
         });
     }
 
