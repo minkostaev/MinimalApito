@@ -1,6 +1,6 @@
 ﻿namespace Apito.Services.Endpoints;
 
-public class ItemsAsync
+public static class ItemsAsync
 {
     private static string? CollectionName { get; set; }
     private static string? DatabasesName { get; set; }
@@ -20,7 +20,7 @@ public class ItemsAsync
         item.MapDelete("", DeleteOneAsync);
     }
 
-    private static async Task<IResult> GetAllAsync(MongoCrud crud)///, HttpContext context)
+    private static async Task<IResult> GetAllAsync(MongoCrud crud)
     {
         var jsonList = await crud.GetCollectionToJsonAsync(CollectionName!, DatabasesName!);
         if (jsonList == null)
@@ -37,7 +37,7 @@ public class ItemsAsync
         return Results.Created($"/items/{id}", itemJason);
     }
 
-    private static async Task<IResult> GetOneAsync(MongoCrud crud, HttpContext context, string id)
+    private static async Task<IResult> GetOneAsync(MongoCrud crud, string id)
     {
         var item = await crud.GetItemJsonAsync(id, CollectionName!, DatabasesName!);
         if (item == null)
@@ -51,10 +51,10 @@ public class ItemsAsync
         bool edited = await crud.EditAsync(requestBody, id, CollectionName!, DatabasesName!);
         if (!edited)
             return Results.NotFound();
-        return await GetOneAsync(crud, context, id);
+        return await GetOneAsync(crud, id);
     }
 
-    private static async Task<IResult> DeleteOneAsync(MongoCrud crud, HttpContext context, string id)
+    private static async Task<IResult> DeleteOneAsync(MongoCrud crud, string id)
     {
         var deleted = await crud.RemoveAsync(id, CollectionName!, DatabasesName!);
         if (!deleted)
