@@ -71,13 +71,13 @@ public static class BuilderEndpoints
             return "Version " + apiVer?.MajorVersion?.ToString();
         });
 
-        //root.MapGet("/pdf", () =>
-        //{
-        //    var htmlContent = String.Format("<body>Hello world: {0}</body>", DateTime.Now);
-        //    var htmlToPdf = new NReco.PdfGenerator.HtmlToPdfConverter();
-        //    var byteResult = htmlToPdf.GeneratePdf(htmlContent);
-        //    return Results.File(byteResult, "application/pdf", "pdf.pdf");
-        //}).WithName("GetPdf").WithOpenApi();
+        root.MapGet("/pdf", () =>
+        {
+            var htmlContent = String.Format("<body>Hello world: {0}</body>", DateTime.Now);
+            var htmlToPdf = new NReco.PdfGenerator.HtmlToPdfConverter();
+            var byteResult = htmlToPdf.GeneratePdf(htmlContent);
+            return Results.File(byteResult, "application/pdf", "pdf.pdf");
+        }).WithName("GetPdf").WithOpenApi();
     }
 
     public static void AddMore(this RouteHandlerBuilder routeHandlerBuilder,
