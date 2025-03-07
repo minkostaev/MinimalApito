@@ -26,4 +26,9 @@ RUN dotnet publish "./Apito.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:U
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+# Install necessary packages for NReco.PdfGenerator
+RUN apt-get update && apt-get install -y \
+    libgdiplus \
+    libc6-dev \
+    && rm -rf /var/lib/apt/lists/*
 ENTRYPOINT ["dotnet", "Apito.dll"]
