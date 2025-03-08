@@ -4,8 +4,12 @@
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 USER app
 WORKDIR /app
-# Install dependencies for wkhtmltopdf
-RUN apt-get update && apt-get install -y \
+# Set noninteractive mode for apt-get
+ENV DEBIAN_FRONTEND=noninteractive 
+# Update package lists before installing dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
     libgdiplus \
     libx11-6 \
     libxext6 \
@@ -19,7 +23,7 @@ RUN apt-get update && apt-get install -y \
     libuuid1 \
     libxcb1 \
     && rm -rf /var/lib/apt/lists/*
-# Add wkhtmltopdf (static binary version)
+# Install wkhtmltopdf (static binary version)
 RUN curl -SL https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb -o wkhtmltopdf.deb \
     && dpkg -i wkhtmltopdf.deb \
     && apt-get -f install -y \
