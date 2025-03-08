@@ -7,6 +7,11 @@ public static class BuilderApp
     public static void Init(this WebApplicationBuilder builder)//1
     {
         AppValues.IsDevelopment = builder.Environment.IsDevelopment();
+        AppValues.IsProduction = builder.Environment.IsProduction();
+        AppValues.ApplicationName = builder.Environment.ApplicationName;
+        AppValues.EnvironmentName = builder.Environment.EnvironmentName;
+        AppValues.ContentPath = builder.Environment.ContentRootPath;
+        AppValues.WebPath = builder.Environment.WebRootPath;
         AppSettings.Init(builder.Configuration);//appsettings.json to objects
     }
 

@@ -5,6 +5,9 @@ using Apito.Services.Endpoints;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using PuppeteerSharp;
+using System.Runtime.InteropServices;
+using System.Text;
 
 public static class BuilderEndpoints
 {
@@ -71,13 +74,33 @@ public static class BuilderEndpoints
             return "Version " + apiVer?.MajorVersion?.ToString();
         });
 
-        root.MapGet("/pdf", () =>
+        root.MapGet("/pdf1", () =>
         {
             var htmlContent = String.Format("<body>Hello world: {0}</body>", DateTime.Now);
             var htmlToPdf = new NReco.PdfGenerator.HtmlToPdfConverter();
             var byteResult = htmlToPdf.GeneratePdf(htmlContent);
             return Results.File(byteResult, "application/pdf", "pdf.pdf");
-        }).WithName("GetPdf").WithOpenApi();
+        }).WithName("GetPdf1").WithOpenApi();
+        root.MapGet("/pdf2", async () =>
+        {
+            using var browser = await Puppeteer.LaunchAsync(new LaunchOptions { Headless = true });
+            using var page = await browser.NewPageAsync();
+            await page.SetContentAsync("<div>My Receipt</div>");
+            byte[] byteResult = await page.PdfDataAsync();
+            return Results.File(byteResult, "application/pdf", "pdf.pdf");
+        }).WithName("GetPdf2").WithOpenApi();
+
+        root.MapGet("/os-info", (IHostEnvironment env) =>
+        {
+            var osDescription = RuntimeInformation.OSDescription;
+            var osArchitecture = RuntimeInformation.OSArchitecture.ToString();
+            return Results.Ok(new
+            {
+                Environment = env.EnvironmentName,
+                OSDescription = osDescription,
+                OSArchitecture = osArchitecture
+            });
+        });
     }
 
     public static void AddMore(this RouteHandlerBuilder routeHandlerBuilder,

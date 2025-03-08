@@ -11,6 +11,11 @@ public static class AppValues
     ///string? vaultKey = Environment.GetEnvironmentVariable("Vault");
 
     public static bool IsDevelopment { get; set; }
+    public static bool IsProduction { get; set; }
+    public static string? ApplicationName { get; set; }
+    public static string? EnvironmentName { get; set; }
+    public static string? ContentPath { get; set; }
+    public static string? WebPath { get; set; }
 
     public static string Bearer => JwtBearerDefaults.AuthenticationScheme;
 
