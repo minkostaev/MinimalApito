@@ -4,10 +4,10 @@
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 USER app
 WORKDIR /app
-# Set noninteractive mode for apt-get
+# Set non-interactive mode for APT
 ENV DEBIAN_FRONTEND=noninteractive 
-# Update package lists before installing dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Fix for package update issues
+RUN apt-get clean && apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
     libgdiplus \
@@ -24,13 +24,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxcb1 \
     && rm -rf /var/lib/apt/lists/*
 # Install wkhtmltopdf (static binary version)
-RUN curl -SL https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb -o wkhtmltopdf.deb \
+RUN curl -SL https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.bookworm_amd64.deb -o wkhtmltopdf.deb \
     && dpkg -i wkhtmltopdf.deb \
     && apt-get -f install -y \
     && rm wkhtmltopdf.deb
 EXPOSE 80
 EXPOSE 8081
-
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
