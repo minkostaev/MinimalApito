@@ -4,6 +4,26 @@
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 USER app
 WORKDIR /app
+# Install dependencies for wkhtmltopdf
+RUN apt-get update && apt-get install -y \
+    libgdiplus \
+    libx11-6 \
+    libxext6 \
+    libxrender1 \
+    libfontconfig1 \
+    fontconfig \
+    libfreetype6 \
+    libjpeg62-turbo \
+    libpng16-16 \
+    libexpat1 \
+    libuuid1 \
+    libxcb1 \
+    && rm -rf /var/lib/apt/lists/*
+# Add wkhtmltopdf (static binary version)
+RUN curl -SL https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb -o wkhtmltopdf.deb \
+    && dpkg -i wkhtmltopdf.deb \
+    && apt-get -f install -y \
+    && rm wkhtmltopdf.deb
 EXPOSE 80
 EXPOSE 8081
 
@@ -26,9 +46,4 @@ RUN dotnet publish "./Apito.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:U
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-# Install necessary packages for NReco.PdfGenerator
-RUN apt-get update && apt-get install -y \
-    libgdiplus \
-    libc6-dev \
-    && rm -rf /var/lib/apt/lists/*
 ENTRYPOINT ["dotnet", "Apito.dll"]
