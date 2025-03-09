@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using PuppeteerSharp;
 using System.Runtime.InteropServices;
-using System.Text;
 
 public static class BuilderEndpoints
 {
@@ -52,7 +51,8 @@ public static class BuilderEndpoints
         MintzatEmail.Map(emailResend);
 
         root.MapGet("/logger", [Authorize] () =>
-        { return CustomLogger.Get(); }).WithName("GetLogger").WithOpenApi();
+        { return CustomLogger.Get(); }).WithName("GetLogger")
+        .WithDescription("This endpoint will give you a warm greeting!").WithOpenApi();
         root.MapGet("/cors", [Authorize] () =>
         { return AppSettings.CorsOrigins; }).WithName("GetCors").WithOpenApi();
         root.MapGet("/paths", [Authorize] () => 
@@ -76,21 +76,35 @@ public static class BuilderEndpoints
 
         root.MapGet("/pdf1", () =>
         {
-            var htmlContent = String.Format("<body>Hello world: {0}</body>", DateTime.Now);
-            var htmlToPdf = new NReco.PdfGenerator.HtmlToPdfConverter();
-            var byteResult = htmlToPdf.GeneratePdf(htmlContent);
-            return Results.File(byteResult, "application/pdf", "pdf.pdf");
+            try
+            {
+                var htmlContent = String.Format("<body>Hello world: {0}</body>", DateTime.Now);
+                var htmlToPdf = new NReco.PdfGenerator.HtmlToPdfConverter();
+                var byteResult = htmlToPdf.GeneratePdf(htmlContent);
+                return Results.File(byteResult, "application/pdf", "pdf.pdf");
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message);
+            }
         }).WithName("GetPdf1").WithOpenApi();
         root.MapGet("/pdf2", async () =>
         {
-            using var browser = await Puppeteer.LaunchAsync(new LaunchOptions { Headless = true });
-            using var page = await browser.NewPageAsync();
-            await page.SetContentAsync("<div>My Receipt</div>");
-            byte[] byteResult = await page.PdfDataAsync();
-            return Results.File(byteResult, "application/pdf", "pdf.pdf");
+            try
+            {
+                using var browser = await Puppeteer.LaunchAsync(new LaunchOptions { Headless = true });
+                using var page = await browser.NewPageAsync();
+                await page.SetContentAsync("<div>My Receipt</div>");
+                byte[] byteResult = await page.PdfDataAsync();
+                return Results.File(byteResult, "application/pdf", "pdf.pdf");
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message);
+            }
         }).WithName("GetPdf2").WithOpenApi();
 
-        root.MapGet("/os-info", (IHostEnvironment env) =>
+        root.MapGet("/osInfo", (IHostEnvironment env) =>
         {
             var osDescription = RuntimeInformation.OSDescription;
             var osArchitecture = RuntimeInformation.OSArchitecture.ToString();

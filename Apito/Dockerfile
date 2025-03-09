@@ -4,6 +4,21 @@
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 USER app
 WORKDIR /app
+# Install wkhtmltopdf dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    wkhtmltopdf \
+    fontconfig \
+    libfreetype6 \
+    libx11-6 \
+    libxext6 \
+    libxrender1 \
+    xfonts-75dpi \
+    xfonts-base && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+# Copy the application files
+COPY . .
 EXPOSE 80
 EXPOSE 8081
 
