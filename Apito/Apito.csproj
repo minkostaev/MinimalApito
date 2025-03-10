@@ -21,4 +21,10 @@
     <PackageReference Include="Weasyprint.Wrapped" Version="7.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="C:\Users\shefa\.nuget\packages\weasyprint.wrapped\7.0.1\contentFiles\any\any\standalone-windows-64.zip">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
