@@ -5,8 +5,8 @@ using Apito.Services.Endpoints;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using PuppeteerSharp;
 using System.Runtime.InteropServices;
+using Weasyprint.Wrapped;
 
 public static class BuilderEndpoints
 {
@@ -92,11 +92,9 @@ public static class BuilderEndpoints
         {
             try
             {
-                using var browser = await Puppeteer.LaunchAsync(new LaunchOptions { Headless = true });
-                using var page = await browser.NewPageAsync();
-                await page.SetContentAsync("<div>My Receipt</div>");
-                byte[] byteResult = await page.PdfDataAsync();
-                return Results.File(byteResult, "application/pdf", "pdf.pdf");
+                await new Printer().Initialize();
+                var byteResult = await new Printer().Print("<html><body><h1>TEST</h1></body></html>");
+                return Results.File(byteResult.Bytes, "application/pdf", "pdf.pdf");
             }
             catch (Exception ex)
             {
