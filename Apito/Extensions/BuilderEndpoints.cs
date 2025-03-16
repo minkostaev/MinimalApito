@@ -73,34 +73,6 @@ public static class BuilderEndpoints
             return "Version " + apiVer?.MajorVersion?.ToString();
         });
 
-        //root.MapGet("/pdf1", () =>
-        //{
-        //    try
-        //    {
-        //        var htmlContent = String.Format("<body>Hello world: {0}</body>", DateTime.Now);
-        //        var htmlToPdf = new NReco.PdfGenerator.HtmlToPdfConverter();
-        //        var byteResult = htmlToPdf.GeneratePdf(htmlContent);
-        //        return Results.File(byteResult, "application/pdf", "pdf.pdf");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Results.Problem(ex.Message);
-        //    }
-        //}).WithName("GetPdf1").WithOpenApi();
-        //root.MapGet("/pdf2", async () =>
-        //{
-        //    try
-        //    {
-        //        await new Printer().Initialize();
-        //        var byteResult = await new Printer().Print("<html><body><h1>TEST</h1></body></html>");
-        //        return Results.File(byteResult.Bytes, "application/pdf", "pdf.pdf");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Results.Problem(ex.Message);
-        //    }
-        //}).WithName("GetPdf2").WithOpenApi();
-
         root.MapGet("/osInfo", (IHostEnvironment env) =>
         {
             var osDescription = RuntimeInformation.OSDescription;
